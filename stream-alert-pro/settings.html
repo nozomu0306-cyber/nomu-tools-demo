@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Alert Pro - 設定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@400;700;800&family=Orbitron:wght@400;700;900&family=Zen+Dots&family=DotGothic16&family=Rajdhani:wght@400;600;700&family=Press+Start+2P&family=Kosugi+Maru&family=Dela+Gothic+One&family=Rampart+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/settings.css">
+<link rel="stylesheet" href="css/timeline.css">
+</head>
+<body>
+<div class="app">
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1 class="header-title">Stream Alert Pro</h1>
+    <p class="header-sub">配信アラートビルダー</p>
+  </header>
+
+  <!-- OBS用URL出力 -->
+  <section class="url-section">
+    <label class="url-label">OBS用URL</label>
+    <div class="url-row">
+      <input type="text" id="obs-url" class="url-input" readonly>
+      <button id="btn-copy-url" class="btn btn-primary">URLをコピー</button>
+    </div>
+    <p id="copy-msg" class="copy-msg"></p>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <div class="main-layout">
+    <!-- 左: 設定パネル -->
+    <div class="settings-panel">
+      <!-- タブ -->
+      <div class="tabs">
+        <button class="tab active" data-tab="alert">アラート</button>
+        <button class="tab" data-tab="layers">レイヤー</button>
+        <button class="tab" data-tab="timeline">タイムライン</button>
+        <button class="tab" data-tab="theme">テーマ</button>
+        <button class="tab" data-tab="sound">サウンド</button>
+        <button class="tab" data-tab="queue">キュー</button>
+        <button class="tab" data-tab="api">API</button>
+        <button class="tab" data-tab="save">保存</button>
+      </div>
+
+      <!-- アラートタブ -->
+      <div class="tab-content active" id="tab-alert">
+        <div class="field">
+          <label>アラートの種類</label>
+          <div class="scene-grid">
+            <button class="scene-btn active" data-alert="follow">
+              <span class="scene-icon">🎉</span>
+              <span>Follow</span>
+            </button>
+            <button class="scene-btn" data-alert="subscribe">
+              <span class="scene-icon">⭐</span>
+              <span>Subscribe</span>
+            </button>
+            <button class="scene-btn" data-alert="donation">
+              <span class="scene-icon">💰</span>
+              <span>Donation</span>
+            </button>
+            <button class="scene-btn" data-alert="raid">
+              <span class="scene-icon">🚀</span>
+              <span>Raid</span>
+            </button>
+            <button class="scene-btn" data-alert="custom1">
+              <span class="scene-icon">🔔</span>
+              <span>Custom1</span>
+            </button>
+            <button class="scene-btn" data-alert="custom2">
+              <span class="scene-icon">🔔</span>
+              <span>Custom2</span>
+            </button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-alertEnabled" checked> このアラートを有効化
+          </label>
+        </div>
+        <div class="field">
+          <label>表示時間</label>
+          <input type="range" id="opt-alertDuration" min="1" max="15" value="5" class="range">
+          <span class="range-val" id="val-alertDuration">5秒</span>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-alertPriority"> 優先表示（キューをスキップ）
+          </label>
+        </div>
+      </div>
+
+      <!-- レイヤータブ -->
+      <div class="tab-content" id="tab-layers">
+        <div class="field">
+          <label>レイヤー一覧</label>
+          <div class="layer-list" id="layer-list">
+            <!-- layers populated by JS -->
+          </div>
+          <div class="field-row" style="margin-top:8px;">
+            <select id="opt-layerType" class="select">
+              <option value="text">テキスト</option>
+              <option value="emoji">絵文字</option>
+              <option value="shape">シェイプ</option>
+              <option value="particle">パーティクル</option>
+            </select>
+            <button id="btn-add-layer" class="btn btn-sm btn-primary">追加</button>
+            <button id="btn-remove-layer" class="btn btn-sm btn-outline">削除</button>
+          </div>
+          <div class="field-row" style="margin-top:4px;">
+            <button id="btn-layer-up" class="btn btn-sm btn-outline">▲ 上へ</button>
+            <button id="btn-layer-down" class="btn btn-sm btn-outline">▼ 下へ</button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div id="layer-props">
+          <!-- レイヤープロパティ: テキストレイヤー -->
+          <div class="sub-fields" id="layer-prop-text">
+            <h3 class="section-title">テキストレイヤー設定</h3>
+            <div class="field">
+              <label>テキスト内容</label>
+              <input type="text" id="opt-layerText" value="新しいフォロワー！" class="input">
+            </div>
+            <div class="field">
+              <label>フォント</label>
+              <select id="opt-layerFont" class="select">
+                <option value="Noto Sans JP">Noto Sans JP</option>
+                <option value="M PLUS Rounded 1c">M PLUS Rounded 1c</option>
+                <option value="Orbitron">Orbitron</option>
+                <option value="Zen Dots">Zen Dots</option>
+                <option value="DotGothic16">DotGothic16</option>
+                <option value="Rajdhani">Rajdhani</option>
+                <option value="Press Start 2P">Press Start 2P</option>
+                <option value="Kosugi Maru">Kosugi Maru</option>
+                <option value="Dela Gothic One">Dela Gothic One</option>
+                <option value="Rampart One">Rampart One</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>サイズ</label>
+                <input type="range" id="opt-layerFontSize" min="12" max="200" value="48" class="range">
+                <span class="range-val" id="val-layerFontSize">48px</span>
+              </div>
+              <div class="field">
+                <label>色</label>
+                <input type="color" id="opt-layerTextColor" value="#ffffff" class="color-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- レイヤープロパティ: 絵文字レイヤー -->
+          <div class="sub-fields" id="layer-prop-emoji" style="display:none;">
+            <h3 class="section-title">絵文字レイヤー設定</h3>
+            <div class="field">
+              <label>絵文字</label>
+              <input type="text" id="opt-layerEmoji" value="🎉" class="input input-sm">
+            </div>
+            <div class="field">
+              <label>サイズ</label>
+              <input type="range" id="opt-layerEmojiSize" min="16" max="200" value="64" class="range">
+              <span class="range-val" id="val-layerEmojiSize">64px</span>
+            </div>
+          </div>
+
+          <!-- レイヤープロパティ: シェイプレイヤー -->
+          <div class="sub-fields" id="layer-prop-shape" style="display:none;">
+            <h3 class="section-title">シェイプレイヤー設定</h3>
+            <div class="field">
+              <label>形状</label>
+              <select id="opt-layerShape" class="select">
+                <option value="rect">矩形</option>
+                <option value="circle">円</option>
+                <option value="rounded">角丸矩形</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>幅</label>
+                <input type="range" id="opt-layerShapeW" min="10" max="800" value="200" class="range">
+                <span class="range-val" id="val-layerShapeW">200px</span>
+              </div>
+              <div class="field">
+                <label>高さ</label>
+                <input type="range" id="opt-layerShapeH" min="10" max="600" value="100" class="range">
+                <span class="range-val" id="val-layerShapeH">100px</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>背景色</label>
+                <input type="color" id="opt-layerShapeColor" value="#1a1a2e" class="color-input">
+              </div>
+              <div class="field">
+                <label>枠線色</label>
+                <input type="color" id="opt-layerShapeBorder" value="#00aaff" class="color-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- レイヤープロパティ: パーティクルレイヤー -->
+          <div class="sub-fields" id="layer-prop-particle" style="display:none;">
+            <h3 class="section-title">パーティクルレイヤー設定</h3>
+            <div class="field">
+              <label>パーティクルタイプ</label>
+              <select id="opt-layerParticleType" class="select">
+                <option value="confetti">紙吹雪</option>
+                <option value="star">星</option>
+                <option value="sparkle">キラキラ</option>
+                <option value="bubble">バブル</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>色</label>
+                <input type="color" id="opt-layerParticleColor" value="#ffcc00" class="color-input">
+              </div>
+              <div class="field">
+                <label>数</label>
+                <input type="range" id="opt-layerParticleN" min="5" max="100" value="30" class="range">
+                <span class="range-val" id="val-layerParticleN">30</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- タイムラインタブ -->
+      <div class="tab-content" id="tab-timeline">
+        <div class="field">
+          <label>アニメーション タイムライン</label>
+          <div id="timeline-editor">
+            <!-- populated by timeline.js -->
+          </div>
+        </div>
+        <div class="field-row" style="margin-top:8px;">
+          <button id="btn-tl-play" class="btn btn-sm btn-primary">▶ 再生</button>
+          <button id="btn-tl-pause" class="btn btn-sm btn-outline">⏸ 一時停止</button>
+          <button id="btn-tl-stop" class="btn btn-sm btn-outline">⏹ 停止</button>
+        </div>
+        <div class="field" style="margin-top:12px;">
+          <label>総再生時間</label>
+          <input type="range" id="opt-tlDuration" min="1" max="15" value="5" class="range">
+          <span class="range-val" id="val-tlDuration">5秒</span>
+        </div>
+      </div>
+
+      <!-- テーマタブ -->
+      <div class="tab-content" id="tab-theme">
+        <div class="field">
+          <label>テーマ</label>
+          <div class="theme-grid">
+            <button class="theme-btn active" data-theme="neon">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);color:#00aaff;">Aa</div>
+              <span>ネオン</span>
+            </button>
+            <button class="theme-btn" data-theme="gaming">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0d0d0d,#1a0a2e);background-image:linear-gradient(90deg,#ff6ec7,#7873f5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Aa</div>
+              <span>ゲーミング</span>
+            </button>
+            <button class="theme-btn" data-theme="minimal">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);color:#ffffff;">Aa</div>
+              <span>ミニマル</span>
+            </button>
+            <button class="theme-btn" data-theme="pastel">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#fce4ec,#e1bee7);color:#5d4037;">Aa</div>
+              <span>パステル</span>
+            </button>
+            <button class="theme-btn" data-theme="retro">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#001100,#002200);color:#00ff41;font-family:monospace;">Aa</div>
+              <span>レトロ</span>
+            </button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="field">
+          <label>フォント</label>
+          <select id="opt-font" class="select">
+            <option value="Noto Sans JP">Noto Sans JP</option>
+            <option value="M PLUS Rounded 1c">M PLUS Rounded 1c</option>
+            <option value="Orbitron">Orbitron</option>
+            <option value="Zen Dots">Zen Dots</option>
+            <option value="DotGothic16">DotGothic16</option>
+            <option value="Rajdhani">Rajdhani</option>
+            <option value="Press Start 2P">Press Start 2P</option>
+            <option value="Kosugi Maru">Kosugi Maru</option>
+            <option value="Dela Gothic One">Dela Gothic One</option>
+            <option value="Rampart One">Rampart One</option>
+          </select>
+        </div>
+
+        <hr class="divider">
+
+        <div class="field">
+          <label>アラート表示位置</label>
+          <div class="position-grid">
+            <button class="pos-btn" data-pos="top-left">↖</button>
+            <button class="pos-btn" data-pos="top-center">↑</button>
+            <button class="pos-btn" data-pos="top-right">↗</button>
+            <button class="pos-btn" data-pos="middle-left">←</button>
+            <button class="pos-btn active" data-pos="middle-center">●</button>
+            <button class="pos-btn" data-pos="middle-right">→</button>
+            <button class="pos-btn" data-pos="bottom-left">↙</button>
+            <button class="pos-btn" data-pos="bottom-center">↓</button>
+            <button class="pos-btn" data-pos="bottom-right">↘</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- サウンドタブ -->
+      <div class="tab-content" id="tab-sound">
+        <h3 class="section-title">アラートサウンド</h3>
+        <div class="field">
+          <label>アラート種類ごとのサウンド</label>
+          <div class="sound-list">
+            <div class="sound-row" data-alert="follow">
+              <span class="sound-label">🎉 Follow</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-follow">未設定</span>
+            </div>
+            <div class="sound-row" data-alert="subscribe">
+              <span class="sound-label">⭐ Subscribe</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-subscribe">未設定</span>
+            </div>
+            <div class="sound-row" data-alert="donation">
+              <span class="sound-label">💰 Donation</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-donation">未設定</span>
+            </div>
+            <div class="sound-row" data-alert="raid">
+              <span class="sound-label">🚀 Raid</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-raid">未設定</span>
+            </div>
+            <div class="sound-row" data-alert="custom1">
+              <span class="sound-label">🔔 Custom1</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-custom1">未設定</span>
+            </div>
+            <div class="sound-row" data-alert="custom2">
+              <span class="sound-label">🔔 Custom2</span>
+              <button class="btn btn-sm btn-outline" data-action="upload-sound">ファイル選択</button>
+              <span class="sound-file" id="sound-file-custom2">未設定</span>
+            </div>
+          </div>
+          <input type="file" id="file-sound" accept="audio/*" style="display:none">
+        </div>
+
+        <hr class="divider">
+
+        <div class="field">
+          <label>音量</label>
+          <input type="range" id="opt-volume" min="0" max="100" value="80" class="range">
+          <span class="range-val" id="val-volume">80%</span>
+        </div>
+        <div class="field-row">
+          <button id="btn-sound-test" class="btn btn-sm btn-primary">▶ サウンドテスト</button>
+        </div>
+
+        <hr class="divider">
+
+        <div class="field-row">
+          <div class="field">
+            <label>フェードイン</label>
+            <input type="range" id="opt-fadeIn" min="0" max="3" step="0.1" value="0.3" class="range">
+            <span class="range-val" id="val-fadeIn">0.3秒</span>
+          </div>
+          <div class="field">
+            <label>フェードアウト</label>
+            <input type="range" id="opt-fadeOut" min="0" max="3" step="0.1" value="0.5" class="range">
+            <span class="range-val" id="val-fadeOut">0.5秒</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- キュータブ -->
+      <div class="tab-content" id="tab-queue">
+        <h3 class="section-title">アラートキュー設定</h3>
+        <div class="field">
+          <label>アラート間の間隔</label>
+          <input type="range" id="opt-queueGap" min="0" max="10" step="0.5" value="2" class="range">
+          <span class="range-val" id="val-queueGap">2.0秒</span>
+        </div>
+        <div class="field">
+          <label>最大キューサイズ</label>
+          <input type="range" id="opt-queueMax" min="1" max="50" value="20" class="range">
+          <span class="range-val" id="val-queueMax">20</span>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-prioritySkip" checked> 優先アラートはキューをスキップ
+          </label>
+        </div>
+      </div>
+
+      <!-- APIタブ -->
+      <div class="tab-content" id="tab-api">
+        <h3 class="section-title">API ドキュメント</h3>
+        <div class="field">
+          <label>エンドポイント</label>
+          <div class="api-doc">
+            <code class="code-block">POST /api/alert</code>
+            <p class="api-desc">アラートをトリガーします。</p>
+            <pre class="code-block">{
+  "type": "follow",
+  "username": "ユーザー名",
+  "message": "カスタムメッセージ"
+}</pre>
+          </div>
+        </div>
+        <div class="field">
+          <label>コード例</label>
+          <div class="api-doc">
+            <pre class="code-block">fetch(alertUrl, {
+  method: 'POST',
+  headers: {'Content-Type':'application/json'},
+  body: JSON.stringify({
+    type: 'follow',
+    username: 'viewer123'
+  })
+});</pre>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <h3 class="section-title">テストトリガー</h3>
+        <div class="field">
+          <label>アラート種類を選んでテスト送信</label>
+          <div class="api-test-grid">
+            <button class="btn btn-sm btn-outline" data-test="follow">🎉 Follow</button>
+            <button class="btn btn-sm btn-outline" data-test="subscribe">⭐ Subscribe</button>
+            <button class="btn btn-sm btn-outline" data-test="donation">💰 Donation</button>
+            <button class="btn btn-sm btn-outline" data-test="raid">🚀 Raid</button>
+            <button class="btn btn-sm btn-outline" data-test="custom1">🔔 Custom1</button>
+            <button class="btn btn-sm btn-outline" data-test="custom2">🔔 Custom2</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 保存タブ -->
+      <div class="tab-content" id="tab-save">
+        <h3 class="section-title">プリセット</h3>
+        <div class="preset-grid">
+          <div class="preset-slot" data-slot="1">
+            <button class="btn btn-sm btn-outline" data-action="save">保存1</button>
+            <button class="btn btn-sm" data-action="load">読込1</button>
+            <button class="btn btn-sm btn-danger" data-action="delete">削除</button>
+          </div>
+          <div class="preset-slot" data-slot="2">
+            <button class="btn btn-sm btn-outline" data-action="save">保存2</button>
+            <button class="btn btn-sm" data-action="load">読込2</button>
+            <button class="btn btn-sm btn-danger" data-action="delete">削除</button>
+          </div>
+          <div class="preset-slot" data-slot="3">
+            <button class="btn btn-sm btn-outline" data-action="save">保存3</button>
+            <button class="btn btn-sm" data-action="load">読込3</button>
+            <button class="btn btn-sm btn-danger" data-action="delete">削除</button>
+          </div>
+          <div class="preset-slot" data-slot="4">
+            <button class="btn btn-sm btn-outline" data-action="save">保存4</button>
+            <button class="btn btn-sm" data-action="load">読込4</button>
+            <button class="btn btn-sm btn-danger" data-action="delete">削除</button>
+          </div>
+          <div class="preset-slot" data-slot="5">
+            <button class="btn btn-sm btn-outline" data-action="save">保存5</button>
+            <button class="btn btn-sm" data-action="load">読込5</button>
+            <button class="btn btn-sm btn-danger" data-action="delete">削除</button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <h3 class="section-title">エクスポート / インポート</h3>
+        <div class="field-row">
+          <button id="btn-export" class="btn btn-outline">エクスポート</button>
+          <button id="btn-import" class="btn btn-outline">インポート</button>
+          <input type="file" id="file-import" accept=".json" style="display:none">
+        </div>
+
+        <hr class="divider">
+
+        <h3 class="section-title">テンプレートギャラリー</h3>
+        <div class="template-gallery">
+          <div class="template-thumb" data-template="1">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);">
+              <span>🎉</span>
+            </div>
+            <span>ネオンポップ</span>
+          </div>
+          <div class="template-thumb" data-template="2">
+            <div class="template-preview" style="background:linear-gradient(135deg,#1a001a,#2e0a2e);">
+              <span>⭐</span>
+            </div>
+            <span>サイバー</span>
+          </div>
+          <div class="template-thumb" data-template="3">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0d0d0d,#1a1a1a);">
+              <span>💰</span>
+            </div>
+            <span>モノクロ</span>
+          </div>
+          <div class="template-thumb" data-template="4">
+            <div class="template-preview" style="background:linear-gradient(135deg,#fce4ec,#e1bee7);">
+              <span>🚀</span>
+            </div>
+            <span>パステル</span>
+          </div>
+          <div class="template-thumb" data-template="5">
+            <div class="template-preview" style="background:linear-gradient(135deg,#001100,#002200);">
+              <span>🎉</span>
+            </div>
+            <span>レトロ</span>
+          </div>
+          <div class="template-thumb" data-template="6">
+            <div class="template-preview" style="background:linear-gradient(135deg,#2e0a0a,#3e1a0a);">
+              <span>⭐</span>
+            </div>
+            <span>ファイヤー</span>
+          </div>
+          <div class="template-thumb" data-template="7">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0a2e2e,#0a3e3e);">
+              <span>💰</span>
+            </div>
+            <span>アクア</span>
+          </div>
+          <div class="template-thumb" data-template="8">
+            <div class="template-preview" style="background:linear-gradient(135deg,#2e2e0a,#3e3e1a);">
+              <span>🚀</span>
+            </div>
+            <span>ゴールド</span>
+          </div>
+          <div class="template-thumb" data-template="9">
+            <div class="template-preview" style="background:linear-gradient(135deg,#0a0a3e,#2e0a3e);">
+              <span>🔔</span>
+            </div>
+            <span>ギャラクシー</span>
+          </div>
+          <div class="template-thumb" data-template="10">
+            <div class="template-preview" style="background:linear-gradient(135deg,#1a2e1a,#0a3e0a);">
+              <span>🔔</span>
+            </div>
+            <span>フォレスト</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右: プレビュー -->
+    <div class="preview-panel">
+      <div class="preview-header">
+        <span>プレビュー</span>
+        <div class="preview-size">
+          <button class="size-btn active" data-w="800" data-h="450">16:9</button>
+          <button class="size-btn" data-w="800" data-h="600">4:3</button>
+        </div>
+      </div>
+      <div class="preview-wrapper" id="preview-wrapper">
+        <iframe id="preview-frame" src="index.html?preview=true"></iframe>
+      </div>
+      <div class="preview-actions">
+        <label>テスト送信</label>
+        <div class="field-row">
+          <select id="opt-testType" class="select">
+            <option value="follow">🎉 Follow</option>
+            <option value="subscribe">⭐ Subscribe</option>
+            <option value="donation">💰 Donation</option>
+            <option value="raid">🚀 Raid</option>
+            <option value="custom1">🔔 Custom1</option>
+            <option value="custom2">🔔 Custom2</option>
+          </select>
+          <button id="btn-test-send" class="btn btn-primary">テスト送信</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/settings.js"></script>
+<script src="js/timeline.js"></script>
+</body>
+</html>

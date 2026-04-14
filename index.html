@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOMU TOOLS — OBS配信ツール一覧 & デモ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a14;
+  --surface: #12122a;
+  --surface2: #1a1a3a;
+  --border: #2a2a50;
+  --text: #e0e0f0;
+  --text-dim: #8888aa;
+  --primary: #6c5ce7;
+  --accent: #00aaff;
+  --pink: #ff6ec7;
+  --green: #00cec9;
+}
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ── Hero Section ── */
+.hero {
+  text-align: center;
+  padding: 80px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(108,92,231,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(0,170,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+
+.hero-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 16px;
+  border-radius: 20px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 16px;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+
+.hero-features {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.hero-tag {
+  background: rgba(108,92,231,0.15);
+  border: 1px solid rgba(108,92,231,0.3);
+  color: #c4b5fd;
+  font-size: 13px;
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+.hero-cta {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 40px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hero-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(108,92,231,0.4);
+}
+
+/* ── Tools Grid ── */
+.section { max-width: 1200px; margin: 0 auto; padding: 60px 24px; }
+.section-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+.section-sub {
+  text-align: center;
+  color: var(--text-dim);
+  margin-bottom: 48px;
+  font-size: 15px;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tool-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+}
+
+.tool-card-img {
+  width: 100%;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  border-bottom: 1px solid var(--border);
+  display: block;
+}
+
+.tool-card-body { padding: 20px; }
+
+.tool-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tool-icon { font-size: 24px; }
+
+.tool-name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.tool-badge {
+  margin-left: auto;
+  background: rgba(0,206,201,0.15);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+
+.tool-badge.new {
+  background: rgba(255,110,199,0.15);
+  color: var(--pink);
+}
+
+.tool-desc {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+
+.tool-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.tool-tag {
+  background: var(--surface2);
+  color: var(--text-dim);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
+.tool-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-demo, .btn-buy {
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-demo {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-demo:hover {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.btn-buy {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  border: none;
+}
+
+.btn-buy:hover {
+  box-shadow: 0 4px 15px rgba(108,92,231,0.4);
+}
+
+/* ── Demo Modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1100px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.modal-close:hover { background: var(--surface2); color: var(--text); }
+
+.modal-buy-link {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff;
+  padding: 6px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  margin-right: 16px;
+}
+
+.modal-iframe {
+  flex: 1;
+  border: none;
+  width: 100%;
+  background: var(--surface);
+}
+
+/* ── Bundle Section ── */
+.bundle {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 60px;
+}
+
+.bundle h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.bundle-price {
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+
+.bundle-price-big {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.bundle-price-big .original {
+  font-size: 18px;
+  color: var(--text-dim);
+  text-decoration: line-through;
+  margin-right: 8px;
+  font-weight: 400;
+}
+
+.bundle-badge {
+  display: inline-block;
+  background: rgba(255,110,199,0.15);
+  color: var(--pink);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 14px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+/* ── Features Row ── */
+.features-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 60px;
+}
+
+.feature-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.feature-icon { font-size: 32px; margin-bottom: 12px; }
+.feature-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.feature-desc { font-size: 13px; color: var(--text-dim); }
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 40px 24px;
+  border-top: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.footer a { color: var(--accent); text-decoration: none; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .tools-grid { grid-template-columns: 1fr; }
+  .modal { height: 95vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-badge">OBS STREAMING TOOLS</span>
+    <h1>NOMU TOOLS</h1>
+    <p class="hero-sub">OBS配信者のための、インストール不要な配信ツール</p>
+    <div class="hero-features">
+      <span class="hero-tag">HTMLを開くだけ</span>
+      <span class="hero-tag">完全ローカル動作</span>
+      <span class="hero-tag">Windows / Mac / Linux</span>
+      <span class="hero-tag">個別500円</span>
+    </div>
+    <a href="https://nomu0306.booth.pm/" class="hero-cta" target="_blank">BOOTHショップを見る</a>
+  </div>
+</section>
+
+<!-- Tools -->
+<section class="section">
+  <h2 class="section-title">全ツール一覧</h2>
+  <p class="section-sub">画像クリックで実際の設定画面を体験できます</p>
+
+  <div class="tools-grid" id="tools-grid"></div>
+</section>
+
+<!-- Common Features -->
+<section class="section">
+  <h2 class="section-title">全ツール共通の特徴</h2>
+  <p class="section-sub">どのツールも同じ使いやすさ</p>
+  <div class="features-row">
+    <div class="feature-item">
+      <div class="feature-icon">📦</div>
+      <div class="feature-name">インストール不要</div>
+      <div class="feature-desc">HTMLファイルをブラウザで開くだけ。ソフト追加ゼロ。</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-name">完全ローカル動作</div>
+      <div class="feature-desc">外部サーバーへの通信なし。データが外に出ません。</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">🎨</div>
+      <div class="feature-name">5テーマ統一デザイン</div>
+      <div class="feature-desc">ネオン / ゲーミング / ミニマル / パステル / レトロ</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">💾</div>
+      <div class="feature-name">設定の保存・共有</div>
+      <div class="feature-desc">プリセット保存、JSONエクスポート/インポート対応。</div>
+    </div>
+  </div>
+
+  <!-- Bundle -->
+  <div class="bundle">
+    <h3>配信ツール 5点セット</h3>
+    <div class="bundle-price">Timer / Chat / Panel / Scenes / Soundboard</div>
+    <div class="bundle-price-big">
+      <span class="original">2,500円</span>2,000円
+    </div>
+    <div class="bundle-badge">500円おトク！</div>
+    <br>
+    <a href="https://nomu0306.booth.pm/items/8196162" class="hero-cta" target="_blank" style="font-size:14px;padding:12px 32px;">セットを見る</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>NOMU TOOLS &copy; 2026 &mdash; <a href="https://nomu0306.booth.pm/" target="_blank">BOOTH</a> &middot; <a href="https://x.com/nomu_jj1" target="_blank">X (@nomu_jj1)</a></p>
+</footer>
+
+<!-- Demo Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-title">デモ</span>
+      <a class="modal-buy-link" id="modal-buy" href="#" target="_blank">BOOTHで購入</a>
+      <button class="modal-close" id="modal-close">&times;</button>
+    </div>
+    <iframe class="modal-iframe" id="modal-iframe" src="about:blank"></iframe>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var BOOTH_BASE = 'https://nomu0306.booth.pm/items/';
+
+  var tools = [
+    {
+      id: 'timer',
+      icon: '⏱',
+      name: 'Stream Timer',
+      nameJa: '配信タイマー Pro',
+      desc: 'カウントダウン/アップ対応のOBS配信タイマー。8フォント、グロー・グラデーション等のエフェクト付き。',
+      tags: ['カウントダウン', 'エフェクト', '8フォント', 'プログレスバー'],
+      boothId: '8192051',
+      demoUrl: '', // settings.htmlへの相対パス（GitHub Pagesでは同一オリジン）
+      img: 'img/timer.jpg',
+      badge: '',
+    },
+    {
+      id: 'chat',
+      icon: '💬',
+      name: 'Chat Style Pro',
+      nameJa: 'チャットオーバーレイ',
+      desc: 'チャット表示を7テーマでスタイリング。4種アニメーション付きでプロの見た目に。',
+      tags: ['7テーマ', 'アニメーション', 'チャット表示', 'プリセット'],
+      boothId: '8196086',
+      img: 'img/chat.jpg',
+      badge: '',
+    },
+    {
+      id: 'panel',
+      icon: '📊',
+      name: 'Stream Info Panel',
+      nameJa: '情報パネルビルダー',
+      desc: '7種ウィジェットを1つのブラウザソースに自由配置。目標バー、カウンター、SNSリンク等を一元管理。',
+      tags: ['7ウィジェット', '自由配置', 'カウンターAPI', 'マルチウィジェット'],
+      boothId: '8196085',
+      img: 'img/panel.jpg',
+      badge: '',
+    },
+    {
+      id: 'scenes',
+      icon: '🎬',
+      name: 'Stream Scenes Pro',
+      nameJa: '配信画面セットビルダー',
+      desc: '待機・開始・休憩・終了の4シーンをパーティクル＆エフェクト付きで作成。',
+      tags: ['4シーン', 'パーティクル', 'カウントダウン', '10フォント'],
+      boothId: '8196132',
+      img: 'img/scenes.jpg',
+      badge: '',
+    },
+    {
+      id: 'soundboard',
+      icon: '🔊',
+      name: 'Stream Soundboard',
+      nameJa: 'サウンドボード',
+      desc: '効果音をワンクリック再生。キーボードショートカット対応で、ゲーム中でも即発動。',
+      tags: ['ショートカット', '20色パッド', 'グループ管理', 'ローカル保存'],
+      boothId: '8196145',
+      img: 'img/soundboard.jpg',
+      badge: '',
+    },
+    {
+      id: 'alert',
+      icon: '🎉',
+      name: 'Stream Alert Pro',
+      nameJa: 'アラートビルダー',
+      desc: 'タイムラインエディタでアラートアニメーションをドラッグ編集。マルチレイヤー＆パーティクル対応。',
+      tags: ['タイムライン', 'マルチレイヤー', '6種パーティクル', '10テンプレ'],
+      boothId: '8196422',
+      img: 'img/alert.jpg',
+      badge: 'NEW',
+    },
+    {
+      id: 'label',
+      icon: '🏷',
+      name: 'Stream Label Pro',
+      nameJa: 'ラベル/ローワーサード',
+      desc: '6種レイアウトのラベルオーバーレイ。配信者名、SNS、スケジュール等を常時表示。マルチスロット対応。',
+      tags: ['6レイアウト', 'マルチスロット', 'SNSバー', 'アニメーション'],
+      boothId: '', // 未登録の場合は空
+      img: 'img/label.jpg',
+      badge: 'NEW',
+    },
+  ];
+
+  // Render tool cards
+  var grid = document.getElementById('tools-grid');
+  tools.forEach(function(t) {
+    var card = document.createElement('div');
+    card.className = 'tool-card';
+    card.innerHTML =
+      '<img class="tool-card-img" src="' + t.img + '" alt="' + t.name + '" loading="lazy">' +
+      '<div class="tool-card-body">' +
+        '<div class="tool-card-header">' +
+          '<span class="tool-icon">' + t.icon + '</span>' +
+          '<span class="tool-name">' + t.name + '</span>' +
+          (t.badge ? '<span class="tool-badge' + (t.badge === 'NEW' ? ' new' : '') + '">' + t.badge + '</span>' : '') +
+        '</div>' +
+        '<div class="tool-desc">' + t.desc + '</div>' +
+        '<div class="tool-tags">' + t.tags.map(function(tag) { return '<span class="tool-tag">' + tag + '</span>'; }).join('') + '</div>' +
+        '<div class="tool-actions">' +
+          '<a class="btn-demo" href="#" data-tool="' + t.id + '">デモを試す</a>' +
+          (t.boothId ? '<a class="btn-buy" href="' + BOOTH_BASE + t.boothId + '" target="_blank">BOOTH 500円</a>' : '<span class="btn-buy" style="opacity:0.5">近日販売</span>') +
+        '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+
+  // Demo modal
+  var overlay = document.getElementById('modal-overlay');
+  var iframe = document.getElementById('modal-iframe');
+  var title = document.getElementById('modal-title');
+  var buyLink = document.getElementById('modal-buy');
+
+  // Demo URLs - these would point to the actual tools
+  // For GitHub Pages deployment, tools would need to be hosted as subfolders
+  // For now, use relative paths assuming tools are deployed alongside
+  // Local dev: each tool runs on its own port
+  // Production (GitHub Pages): tools deployed as subfolders
+  var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  var demoUrls = isLocal ? {
+    timer: 'http://localhost:8080/settings.html',
+    chat: 'http://localhost:8082/settings.html',
+    panel: 'http://localhost:8083/settings.html',
+    scenes: 'http://localhost:8084/settings.html',
+    soundboard: 'http://localhost:8081/index.html',
+    alert: 'http://localhost:8086/settings.html',
+    label: 'http://localhost:8087/settings.html',
+  } : {
+    timer: 'stream-timer/settings.html',
+    chat: 'chat-style-pro/settings.html',
+    panel: 'stream-info-panel/settings.html',
+    scenes: 'stream-scenes-pro/settings.html',
+    soundboard: 'stream-soundboard/index.html',
+    alert: 'stream-alert-pro/settings.html',
+    label: 'stream-label-pro/settings.html',
+  };
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.btn-demo');
+    if (!btn) return;
+    e.preventDefault();
+    var toolId = btn.dataset.tool;
+    var tool = tools.find(function(t) { return t.id === toolId; });
+    if (!tool) return;
+
+    title.textContent = tool.icon + ' ' + tool.name + ' — ' + tool.nameJa;
+    buyLink.href = tool.boothId ? BOOTH_BASE + tool.boothId : '#';
+    buyLink.style.display = tool.boothId ? '' : 'none';
+    iframe.src = demoUrls[toolId] || 'about:blank';
+    overlay.classList.add('active');
+  });
+
+  document.getElementById('modal-close').addEventListener('click', function() {
+    overlay.classList.remove('active');
+    iframe.src = 'about:blank';
+  });
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      iframe.src = 'about:blank';
+    }
+  });
+})();
+</script>
+</body>
+</html>

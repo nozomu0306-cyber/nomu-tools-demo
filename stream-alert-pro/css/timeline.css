@@ -1,0 +1,263 @@
+/* Stream Alert Pro - Timeline Editor Styles */
+
+.timeline-editor {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── Ruler ── */
+.timeline-ruler {
+  height: 24px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  margin-left: 100px;
+}
+
+.ruler-tick {
+  position: absolute;
+  top: 0;
+  width: 1px;
+  background: var(--border);
+  height: 100%;
+}
+
+.ruler-tick.major {
+  background: var(--text-dim);
+}
+
+.ruler-label {
+  position: absolute;
+  top: 4px;
+  font-size: 10px;
+  color: var(--text-dim);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+/* ── Tracks Area ── */
+.timeline-tracks {
+  position: relative;
+  min-height: 80px;
+}
+
+.timeline-track {
+  display: flex;
+  height: 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.timeline-track:last-child {
+  border-bottom: none;
+}
+
+.track-label {
+  width: 100px;
+  min-width: 100px;
+  padding: 0 8px;
+  font-size: 11px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.track-label:hover {
+  background: var(--surface2);
+}
+
+.track-label.active {
+  color: var(--primary);
+  background: var(--surface2);
+}
+
+.track-type-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.track-area {
+  flex: 1;
+  position: relative;
+  background: var(--bg);
+}
+
+/* ── Track Bars ── */
+.track-bar {
+  position: absolute;
+  top: 4px;
+  height: 24px;
+  border-radius: 4px;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  min-width: 20px;
+  transition: box-shadow 0.15s;
+}
+
+.track-bar:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.track-bar.active {
+  box-shadow: 0 0 0 2px var(--primary);
+  z-index: 2;
+}
+
+.track-bar:active {
+  cursor: grabbing;
+}
+
+/* Bar colors by layer type */
+.track-bar.bar-text     { background: rgba(108, 92, 231, 0.7); }
+.track-bar.bar-emoji    { background: rgba(253, 203, 110, 0.7); }
+.track-bar.bar-shape    { background: rgba(0, 206, 201, 0.7); }
+.track-bar.bar-particle { background: rgba(255, 110, 199, 0.7); }
+.track-bar.bar-sound    { background: rgba(255, 107, 107, 0.5); border: 1px dashed rgba(255, 107, 107, 0.8); }
+
+/* ── Drag Handles ── */
+.track-handle {
+  position: absolute;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 3;
+}
+
+.track-handle:hover,
+.track-handle:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.track-handle.handle-left {
+  left: 0;
+  border-radius: 4px 0 0 4px;
+}
+
+.track-handle.handle-right {
+  right: 0;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── Keyframe Markers ── */
+.keyframe-marker {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  background: #ffd700;
+  transform: translate(-50%, -50%) rotate(45deg);
+  cursor: pointer;
+  z-index: 4;
+  transition: transform 0.1s;
+}
+
+.keyframe-marker:hover {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.3);
+}
+
+/* ── Playhead ── */
+.timeline-playhead {
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: #ff4757;
+  z-index: 10;
+  pointer-events: none;
+  left: 0;
+  margin-left: 100px;
+  transition: none;
+}
+
+.timeline-playhead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -5px;
+  width: 12px;
+  height: 8px;
+  background: #ff4757;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* ── Controls Bar ── */
+.timeline-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.tl-play-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: var(--surface2);
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: background 0.15s;
+}
+
+.tl-play-btn:hover {
+  background: var(--primary);
+}
+
+.tl-play-btn.active {
+  background: var(--primary);
+}
+
+.tl-duration {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.tl-duration input {
+  width: 50px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  color: var(--text);
+  font-size: 12px;
+  text-align: center;
+}
+
+.tl-time-display {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--accent);
+  min-width: 60px;
+}
+
+/* ── Empty State ── */
+.timeline-empty {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 13px;
+}

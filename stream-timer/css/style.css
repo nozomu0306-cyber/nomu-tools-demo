@@ -1,0 +1,198 @@
+/* ========================================
+   配信タイマー Pro - スタイル
+   OBSブラウザソース対応
+   ======================================== */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  overflow: hidden;
+  font-family: var(--timer-font, 'Noto Sans JP', sans-serif);
+}
+
+body.has-bg {
+  background: var(--timer-bg, #000000);
+}
+
+/* ========== タイマーラッパー ========== */
+#timer-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+/* ========== タイマー表示 ========== */
+#timer-display {
+  font-size: var(--timer-size, 72px);
+  color: var(--timer-color, #ffffff);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  line-height: 1.2;
+  position: relative;
+}
+
+/* ========== テキストエフェクト ========== */
+
+/* グロー（光彩） */
+#timer-display.fx-glow {
+  text-shadow:
+    0 0 10px var(--glow-color, #00aaff),
+    0 0 20px var(--glow-color, #00aaff),
+    0 0 40px var(--glow-color, #00aaff),
+    0 0 80px var(--glow-color, #00aaff);
+}
+
+/* アウトライン（縁取り） */
+#timer-display.fx-outline {
+  -webkit-text-stroke: var(--outline-width, 2px) var(--outline-color, #000000);
+  paint-order: stroke fill;
+}
+
+/* グラデーション文字 */
+#timer-display.fx-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--grad-color1, #ff6b6b),
+    var(--grad-color2, #4ecdc4)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* グラデーション + グロー 併用 */
+#timer-display.fx-gradient.fx-glow {
+  filter: drop-shadow(0 0 10px var(--glow-color, #00aaff))
+          drop-shadow(0 0 20px var(--glow-color, #00aaff));
+}
+
+/* カスタムシャドウ */
+#timer-display.fx-shadow {
+  text-shadow:
+    var(--shadow-x, 3px) var(--shadow-y, 3px)
+    var(--shadow-blur, 6px) var(--shadow-color, rgba(0,0,0,0.5));
+}
+
+/* ========== ラベルテキスト ========== */
+.timer-label {
+  font-size: var(--label-size, 20px);
+  color: var(--label-color, #ffffff);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-align: center;
+  opacity: 0.9;
+  text-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.timer-label:empty {
+  display: none;
+}
+
+/* ========== プログレスバー ========== */
+#progress-bar-container {
+  width: 100%;
+  height: var(--progress-height, 4px);
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+  display: none;
+}
+
+#progress-bar-container.active {
+  display: block;
+}
+
+#progress-bar-container.pos-top {
+  order: -2;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+#progress-bar {
+  height: 100%;
+  width: 100%;
+  background: var(--progress-color, #00aaff);
+  border-radius: 2px;
+  transition: width 0.5s linear;
+}
+
+#progress-bar.gradient {
+  background: linear-gradient(
+    90deg,
+    var(--progress-grad1, #ff6b6b),
+    var(--progress-grad2, #4ecdc4)
+  );
+}
+
+/* ========== 終了演出 ========== */
+
+/* 点滅 */
+#timer-display.finish-blink {
+  animation: blink 0.5s ease-in-out 6;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.1; }
+}
+
+/* フェードアウト→テキスト表示 */
+#timer-display.finish-fade {
+  animation: fadeOutIn 2s ease forwards;
+}
+
+@keyframes fadeOutIn {
+  0% { opacity: 1; transform: scale(1); }
+  40% { opacity: 0; transform: scale(0.95); }
+  60% { opacity: 0; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* バウンス */
+#timer-display.finish-bounce {
+  animation: bounceIn 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  40% { transform: scale(1.15); }
+  60% { transform: scale(0.9); }
+  80% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 終了テキスト */
+#timer-display.finished {
+  animation: finishPop 0.6s ease-out;
+}
+
+@keyframes finishPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ========== 数字アニメーション ========== */
+.digit-change {
+  animation: digitPulse 0.15s ease-out;
+}
+
+@keyframes digitPulse {
+  0% { transform: scaleY(0.85); opacity: 0.7; }
+  100% { transform: scaleY(1); opacity: 1; }
+}

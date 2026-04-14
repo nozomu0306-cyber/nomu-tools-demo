@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Info Panel - 設定</title>
+<link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <h1 class="header-title">Stream Info Panel</h1>
+    <p class="header-sub">配信情報パネルビルダー</p>
+  </header>
+
+  <section class="url-section">
+    <label class="url-label">OBS用URL</label>
+    <div class="url-row">
+      <input type="text" id="obs-url" class="url-input" readonly>
+      <button id="btn-copy-url" class="btn btn-primary">URLをコピー</button>
+    </div>
+    <p id="copy-msg" class="copy-msg"></p>
+  </section>
+
+  <div class="main-layout">
+    <div class="settings-panel">
+      <!-- テーマ -->
+      <h3 class="section-title">テーマ</h3>
+      <div class="theme-grid">
+        <button class="theme-btn active" data-theme="neon">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#0a0a2e,#00aaff);"></div>
+          <span>ネオン</span>
+        </button>
+        <button class="theme-btn" data-theme="gaming">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#1a0a2e,#ff6ec7);"></div>
+          <span>ゲーミング</span>
+        </button>
+        <button class="theme-btn" data-theme="minimal">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#1a1a1a,#ffffff);"></div>
+          <span>ミニマル</span>
+        </button>
+        <button class="theme-btn" data-theme="pastel">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#fce4ec,#9c27b0);"></div>
+          <span>パステル</span>
+        </button>
+        <button class="theme-btn" data-theme="retro">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#001100,#00ff41);"></div>
+          <span>レトロ</span>
+        </button>
+      </div>
+
+      <div class="field" style="margin-top:16px;">
+        <label>フォント</label>
+        <select id="opt-font" class="select">
+          <option value="Noto Sans JP">Noto Sans JP</option>
+          <option value="M PLUS Rounded 1c">M PLUS Rounded 1c</option>
+          <option value="Orbitron">Orbitron</option>
+          <option value="DotGothic16">DotGothic16</option>
+          <option value="Kosugi Maru">Kosugi Maru</option>
+        </select>
+      </div>
+
+      <hr class="divider">
+
+      <!-- ウィジェット一覧 -->
+      <h3 class="section-title">ウィジェット</h3>
+      <div id="widget-list" class="widget-list"></div>
+
+      <!-- ウィジェット追加 -->
+      <h3 class="section-title">ウィジェット追加</h3>
+      <div class="add-grid">
+        <button class="add-btn" data-add="goal"><span class="add-btn-icon">📊</span>目標バー</button>
+        <button class="add-btn" data-add="clock"><span class="add-btn-icon">⏱</span>配信時間</button>
+        <button class="add-btn" data-add="counter"><span class="add-btn-icon">🔢</span>カウンター</button>
+        <button class="add-btn" data-add="text"><span class="add-btn-icon">📝</span>テキスト</button>
+        <button class="add-btn" data-add="ticker"><span class="add-btn-icon">📜</span>ティッカー</button>
+        <button class="add-btn" data-add="event"><span class="add-btn-icon">🎉</span>イベント</button>
+        <button class="add-btn" data-add="social"><span class="add-btn-icon">🔗</span>SNSリンク</button>
+      </div>
+
+      <hr class="divider">
+
+      <!-- ウィジェット編集パネル -->
+      <div id="edit-area"></div>
+
+      <hr class="divider">
+      <div class="field-row">
+        <button id="btn-export" class="btn btn-outline btn-sm">エクスポート</button>
+        <button id="btn-import" class="btn btn-outline btn-sm">インポート</button>
+        <input type="file" id="file-import" accept=".json" style="display:none">
+      </div>
+    </div>
+
+    <div class="preview-panel">
+      <div class="preview-header">
+        <span>プレビュー</span>
+      </div>
+      <div class="preview-wrapper">
+        <iframe id="preview-frame" src="index.html"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/settings-app.js"></script>
+</body>
+</html>

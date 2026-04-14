@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>配信タイマー Pro - 設定</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&family=Orbitron:wght@400;700&family=Zen+Dots&family=DotGothic16&family=Rajdhani:wght@400;700&family=Press+Start+2P&family=Kosugi+Maru&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --surface2: #16213e;
+      --surface3: #0f3460;
+      --accent: #e94560;
+      --accent2: #533483;
+      --accent-green: #00d68f;
+      --text: #eee;
+      --text-dim: #888;
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===== ヘッダー ===== */
+    .header {
+      text-align: center;
+      padding: 24px 20px 16px;
+      background: linear-gradient(180deg, rgba(233,69,96,0.1) 0%, transparent 100%);
+    }
+    .header h1 {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      margin-left: 6px;
+      vertical-align: middle;
+      font-weight: 700;
+    }
+    .header p { color: var(--text-dim); font-size: 13px; margin-top: 4px; }
+
+    /* ===== プレビュー ===== */
+    #preview-area {
+      margin: 0 20px 20px;
+      border-radius: var(--radius);
+      padding: 40px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      min-height: 160px;
+      border: 1px solid rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .preview-checkerboard {
+      background: repeating-conic-gradient(#404040 0% 25%, #333 0% 50%) 50% / 16px 16px;
+    }
+    #preview-label-top, #preview-label-bottom {
+      font-size: 16px;
+      color: #fff;
+      opacity: 0.9;
+    }
+    #preview-label-top:empty, #preview-label-bottom:empty { display: none; }
+    #preview-timer {
+      font-size: 72px;
+      font-weight: 700;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      text-align: center;
+      word-break: break-all;
+      line-height: 1.2;
+    }
+    #preview-progress-container {
+      width: 80%;
+      height: 4px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      margin-top: 8px;
+      overflow: hidden;
+      display: none;
+    }
+    #preview-progress-container.active { display: block; }
+    #preview-progress {
+      width: 65%;
+      height: 100%;
+      background: #00aaff;
+      border-radius: 2px;
+    }
+
+    /* ===== メインレイアウト ===== */
+    .main { max-width: 860px; margin: 0 auto; padding: 0 20px 20px; }
+
+    /* ===== タブ ===== */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+      background: var(--surface);
+      padding: 4px;
+      border-radius: var(--radius);
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-family: inherit;
+      padding: 10px 8px;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .tab-btn.active {
+      background: var(--surface3);
+      color: #fff;
+      font-weight: 700;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ===== セクション ===== */
+    .section {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== フォーム ===== */
+    .form-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+    .form-row:last-child { margin-bottom: 0; }
+    label {
+      min-width: 110px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    select, input[type="text"], input[type="number"] {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    select:focus, input:focus { border-color: var(--accent); }
+    select { cursor: pointer; }
+    input[type="number"] { width: 65px; text-align: center; }
+    input[type="range"] { flex: 1; accent-color: var(--accent); }
+    input[type="color"] {
+      width: 36px; height: 32px;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      cursor: pointer; background: none; padding: 2px;
+    }
+    input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 16px; height: 16px; cursor: pointer;
+    }
+    .color-group { display: flex; align-items: center; gap: 6px; }
+    .color-group input[type="text"] { width: 80px; font-family: monospace; font-size: 12px; }
+    .time-inputs { display: flex; align-items: center; gap: 4px; }
+    .time-inputs span { color: var(--text-dim); font-size: 11px; }
+    .range-value { min-width: 45px; text-align: right; font-size: 12px; color: var(--text-dim); }
+    #separator-custom { width: 50px; display: none; }
+
+    /* ===== テーマカード ===== */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+    }
+    .theme-card {
+      background: var(--bg);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .theme-card.selected { border-color: var(--accent); background: rgba(233,69,96,0.1); }
+    .theme-card .theme-preview {
+      font-size: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .theme-card .theme-name { font-size: 12px; color: var(--text-dim); }
+
+    /* ===== ボタン ===== */
+    button { font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .btn {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary { background: var(--surface3); color: #fff; border: none; }
+    .btn-secondary:hover { background: #1a4a8a; }
+    .btn-danger { background: #c0392b; color: #fff; border: none; }
+    .btn-success { background: var(--accent-green); color: #000; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn-lg { padding: 14px 28px; font-size: 15px; }
+
+    /* ===== OBS URL生成 ===== */
+    .obs-url-section {
+      background: linear-gradient(135deg, rgba(233,69,96,0.15), rgba(83,52,131,0.15));
+      border: 1px solid rgba(233,69,96,0.3);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .obs-url-section h3 {
+      font-size: 14px;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    .obs-url-section p {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    #obs-url-output {
+      background: var(--bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-dim);
+      word-break: break-all;
+      margin-bottom: 12px;
+      max-height: 80px;
+      overflow-y: auto;
+    }
+    .copy-feedback {
+      color: var(--accent-green);
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .copy-feedback.show { opacity: 1; }
+
+    /* ===== プリセット ===== */
+    .preset-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .preset-controls input[type="text"] { flex: 1; }
+    #preset-list { display: flex; gap: 8px; flex-wrap: wrap; }
+    .preset-item {
+      display: flex;
+      align-items: center;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .preset-load {
+      background: none; color: var(--text); border: none;
+      padding: 6px 12px; font-size: 12px; font-family: inherit;
+    }
+    .preset-load:hover { background: var(--surface3); }
+    .preset-delete {
+      background: none; color: var(--text-dim); border: none;
+      padding: 6px 8px; font-size: 14px; font-family: inherit;
+    }
+    .preset-delete:hover { color: var(--accent); }
+
+    /* ===== エクスポート/インポート ===== */
+    .io-section { display: flex; gap: 8px; flex-wrap: wrap; }
+    #import-file { display: none; }
+
+    /* ===== フッター ===== */
+    .footer {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 20px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <h1>配信タイマー <span class="badge">PRO</span></h1>
+    <p>設定はリアルタイムでプレビューされます。OBS用URLを生成してお使いください。</p>
+  </div>
+
+  <!-- プレビュー -->
+  <div id="preview-area" class="preview-checkerboard">
+    <div id="preview-label-top"></div>
+    <div id="preview-timer">05:00</div>
+    <div id="preview-label-bottom"></div>
+    <div id="preview-progress-container">
+      <div id="preview-progress"></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- OBS URL生成 -->
+    <div class="obs-url-section">
+      <h3>OBS用URL</h3>
+      <p>下のURLをOBSのブラウザソースの「URL」欄に貼り付けてください。<br>
+      ※「ローカルファイル」のチェックは外してください。</p>
+      <div id="obs-url-output">設定を変更するとURLが生成されます...</div>
+      <button id="copy-url-btn" class="btn btn-primary">URLをコピー</button>
+      <span id="copy-feedback" class="copy-feedback">Copied!</span>
+    </div>
+
+    <!-- タブ -->
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="timer">タイマー</button>
+      <button class="tab-btn" data-tab="appearance">外観</button>
+      <button class="tab-btn" data-tab="effects">エフェクト</button>
+      <button class="tab-btn" data-tab="presets">テーマ / 保存</button>
+    </div>
+
+    <!-- タブ: タイマー設定 -->
+    <div id="tab-timer" class="tab-content active">
+      <div class="section">
+        <div class="section-title">基本設定</div>
+        <div class="form-row">
+          <label for="mode">モード</label>
+          <select id="mode">
+            <option value="countdown">カウントダウン</option>
+            <option value="countup">カウントアップ</option>
+          </select>
+        </div>
+        <div id="countdown-settings">
+          <div class="form-row">
+            <label>開始時間</label>
+            <div class="time-inputs">
+              <input type="number" id="hours" min="0" max="99" value="0"><span>時間</span>
+              <input type="number" id="minutes" min="0" max="59" value="5"><span>分</span>
+              <input type="number" id="seconds" min="0" max="59" value="0"><span>秒</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="format">表示形式</label>
+          <select id="format">
+            <option value="HH:MM:SS">HH:MM:SS</option>
+            <option value="MM:SS" selected>MM:SS</option>
+            <option value="SS">秒のみ</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="separator">区切り文字</label>
+          <select id="separator">
+            <option value=":">: コロン</option>
+            <option value=".">. ドット</option>
+            <option value="custom">カスタム</option>
+          </select>
+          <input type="text" id="separator-custom" maxlength="2" placeholder="-">
+        </div>
+        <div class="form-row">
+          <label for="auto-start">自動開始</label>
+          <input type="checkbox" id="auto-start" checked>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">終了演出</div>
+        <div class="form-row">
+          <label for="finish-text">終了テキスト</label>
+          <input type="text" id="finish-text" placeholder="例: 配信開始！" style="flex:1">
+        </div>
+        <div class="form-row">
+          <label for="finish-effect">演出パターン</label>
+          <select id="finish-effect">
+            <option value="blink">点滅</option>
+            <option value="fade">フェード</option>
+            <option value="bounce">バウンス</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="finish-color">終了テキスト色</label>
+          <div class="color-group">
+            <input type="color" id="finish-color" value="#ffffff">
+            <input type="text" id="finish-color-text" value="#ffffff">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="finish-size">終了テキストサイズ</label>
+          <input type="range" id="finish-size" min="0" max="200" value="0">
+          <span id="finish-size-value" class="range-value">自動</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">ラベルテキスト</div>
+        <div class="form-row">
+          <label for="label-top">上ラベル</label>
+          <input type="text" id="label-top" placeholder="例: 配信開始まで" style="flex:1">
+        </div>
+        <div class="form-row">
+          <label for="label-bottom">下ラベル</label>
+          <input type="text" id="label-bottom" placeholder="例: お待ちください" style="flex:1">
+        </div>
+        <div class="form-row">
+          <label for="label-size">ラベルサイズ</label>
+          <input type="range" id="label-size" min="10" max="60" value="20">
+          <span id="label-size-value" class="range-value">20px</span>
+        </div>
+        <div class="form-row">
+          <label for="label-color">ラベル色</label>
+          <div class="color-group">
+            <input type="color" id="label-color" value="#ffffff">
+            <input type="text" id="label-color-text" value="#ffffff">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- タブ: 外観 -->
+    <div id="tab-appearance" class="tab-content">
+      <div class="section">
+        <div class="section-title">フォント & サイズ</div>
+        <div class="form-row">
+          <label for="font-family">フォント</label>
+          <select id="font-family">
+            <option value="Noto Sans JP">Noto Sans JP</option>
+            <option value="M PLUS Rounded 1c">M PLUS Rounded 1c</option>
+            <option value="Orbitron">Orbitron（SF風）</option>
+            <option value="Zen Dots">Zen Dots（ドット風）</option>
+            <option value="DotGothic16">DotGothic16（レトロ）</option>
+            <option value="Rajdhani">Rajdhani（スポーツ）</option>
+            <option value="Press Start 2P">Press Start 2P（ゲーム）</option>
+            <option value="Kosugi Maru">Kosugi Maru（丸ゴシック）</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="font-size">文字サイズ</label>
+          <input type="range" id="font-size" min="24" max="200" value="72">
+          <span id="font-size-value" class="range-value">72px</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">カラー</div>
+        <div class="form-row">
+          <label for="color">文字色</label>
+          <div class="color-group">
+            <input type="color" id="color" value="#ffffff">
+            <input type="text" id="color-text" value="#ffffff">
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="transparent">背景透過</label>
+          <input type="checkbox" id="transparent" checked>
+        </div>
+        <div class="form-row" id="bg-color-group" style="display:none">
+          <label for="bg-color">背景色</label>
+          <div class="color-group">
+            <input type="color" id="bg-color" value="#000000">
+            <input type="text" id="bg-color-text" value="#000000">
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">プログレスバー</div>
+        <div class="form-row">
+          <label for="progress-enabled">表示する</label>
+          <input type="checkbox" id="progress-enabled">
+        </div>
+        <div id="progress-settings" style="display:none">
+          <div class="form-row">
+            <label for="progress-position">位置</label>
+            <select id="progress-position">
+              <option value="bottom">下</option>
+              <option value="top">上</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="progress-height">高さ</label>
+            <input type="range" id="progress-height" min="2" max="20" value="4">
+            <span id="progress-height-value" class="range-value">4px</span>
+          </div>
+          <div class="form-row">
+            <label for="progress-color">バー色</label>
+            <div class="color-group">
+              <input type="color" id="progress-color" value="#00aaff">
+              <input type="text" id="progress-color-text" value="#00aaff">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="progress-gradient">グラデーション</label>
+            <input type="checkbox" id="progress-gradient">
+          </div>
+          <div id="progress-grad-settings" style="display:none">
+            <div class="form-row">
+              <label>グラデ色1</label>
+              <div class="color-group">
+                <input type="color" id="progress-grad1" value="#ff6b6b">
+                <input type="text" id="progress-grad1-text" value="#ff6b6b">
+              </div>
+            </div>
+            <div class="form-row">
+              <label>グラデ色2</label>
+              <div class="color-group">
+                <input type="color" id="progress-grad2" value="#4ecdc4">
+                <input type="text" id="progress-grad2-text" value="#4ecdc4">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- タブ: エフェクト -->
+    <div id="tab-effects" class="tab-content">
+      <div class="section">
+        <div class="section-title">グロー（光彩）</div>
+        <div class="form-row">
+          <label for="glow-enabled">有効</label>
+          <input type="checkbox" id="glow-enabled">
+        </div>
+        <div id="glow-settings" style="display:none">
+          <div class="form-row">
+            <label for="glow-color">グロー色</label>
+            <div class="color-group">
+              <input type="color" id="glow-color" value="#00aaff">
+              <input type="text" id="glow-color-text" value="#00aaff">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">アウトライン（縁取り）</div>
+        <div class="form-row">
+          <label for="outline-enabled">有効</label>
+          <input type="checkbox" id="outline-enabled">
+        </div>
+        <div id="outline-settings" style="display:none">
+          <div class="form-row">
+            <label for="outline-color">縁取り色</label>
+            <div class="color-group">
+              <input type="color" id="outline-color" value="#000000">
+              <input type="text" id="outline-color-text" value="#000000">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="outline-width">太さ</label>
+            <input type="range" id="outline-width" min="1" max="10" value="2">
+            <span id="outline-width-value" class="range-value">2px</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">グラデーション文字</div>
+        <div class="form-row">
+          <label for="gradient-enabled">有効</label>
+          <input type="checkbox" id="gradient-enabled">
+        </div>
+        <div id="gradient-settings" style="display:none">
+          <div class="form-row">
+            <label>色1</label>
+            <div class="color-group">
+              <input type="color" id="grad-color1" value="#ff6b6b">
+              <input type="text" id="grad-color1-text" value="#ff6b6b">
+            </div>
+          </div>
+          <div class="form-row">
+            <label>色2</label>
+            <div class="color-group">
+              <input type="color" id="grad-color2" value="#4ecdc4">
+              <input type="text" id="grad-color2-text" value="#4ecdc4">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">ドロップシャドウ</div>
+        <div class="form-row">
+          <label for="shadow-enabled">有効</label>
+          <input type="checkbox" id="shadow-enabled">
+        </div>
+        <div id="shadow-settings" style="display:none">
+          <div class="form-row">
+            <label for="shadow-color">影の色</label>
+            <div class="color-group">
+              <input type="color" id="shadow-color" value="#000000">
+              <input type="text" id="shadow-color-text" value="#000000">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="shadow-x">横オフセット</label>
+            <input type="range" id="shadow-x" min="-20" max="20" value="3">
+            <span id="shadow-x-value" class="range-value">3px</span>
+          </div>
+          <div class="form-row">
+            <label for="shadow-y">縦オフセット</label>
+            <input type="range" id="shadow-y" min="-20" max="20" value="3">
+            <span id="shadow-y-value" class="range-value">3px</span>
+          </div>
+          <div class="form-row">
+            <label for="shadow-blur">ぼかし</label>
+            <input type="range" id="shadow-blur" min="0" max="30" value="6">
+            <span id="shadow-blur-value" class="range-value">6px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- タブ: テーマ / 保存 -->
+    <div id="tab-presets" class="tab-content">
+      <div class="section">
+        <div class="section-title">テーマ</div>
+        <div class="theme-grid" id="theme-grid"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">プリセット保存（最大5つ）</div>
+        <div class="preset-controls">
+          <input type="text" id="preset-name" placeholder="プリセット名...">
+          <button id="preset-save" class="btn btn-sm btn-primary">保存</button>
+        </div>
+        <div id="preset-list"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">エクスポート / インポート</div>
+        <div class="io-section">
+          <button id="export-btn" class="btn btn-sm btn-secondary">設定をエクスポート</button>
+          <button id="import-btn" class="btn btn-sm btn-secondary">設定をインポート</button>
+          <input type="file" id="import-file" accept=".json">
+        </div>
+      </div>
+    </div>
+
+    <!-- フッター -->
+    <div class="footer">
+      <button id="reset-btn" class="btn btn-danger">デフォルトに戻す</button>
+    </div>
+  </div>
+
+  <script src="js/settings.js"></script>
+</body>
+</html>

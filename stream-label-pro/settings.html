@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Label Pro - 設定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+Rounded+1c:wght@400;700&family=Orbitron:wght@400;700&family=Zen+Dots&family=DotGothic16&family=Rajdhani:wght@400;600;700&family=Press+Start+2P&family=Kosugi+Maru&family=Dela+Gothic+One&family=Rampart+One&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+<div class="app">
+  <!-- ヘッダー -->
+  <header class="header">
+    <h1 class="header-title">Stream Label Pro</h1>
+    <p class="header-sub">ラベル/ローワーサードビルダー</p>
+  </header>
+
+  <!-- OBS用URL出力 -->
+  <section class="url-section">
+    <label class="url-label">OBS用URL</label>
+    <div class="url-row">
+      <input type="text" id="obs-url" class="url-input" readonly>
+      <button id="btn-copy-url" class="btn btn-primary">URLをコピー</button>
+    </div>
+    <p id="copy-msg" class="copy-msg"></p>
+  </section>
+
+  <!-- メインコンテンツ -->
+  <div class="main-layout">
+    <!-- 左: 設定パネル -->
+    <div class="settings-panel">
+      <!-- タブ -->
+      <div class="tabs">
+        <button class="tab active" data-tab="layout">レイアウト</button>
+        <button class="tab" data-tab="text">テキスト</button>
+        <button class="tab" data-tab="style">スタイル</button>
+        <button class="tab" data-tab="theme">テーマ</button>
+        <button class="tab" data-tab="anim">アニメーション</button>
+        <button class="tab" data-tab="save">保存</button>
+      </div>
+
+      <!-- レイアウトタブ -->
+      <div class="tab-content active" id="tab-layout">
+        <div class="field">
+          <label>スロット</label>
+          <div class="slot-tabs" id="slot-tabs"></div>
+          <div class="slot-actions">
+            <button id="btn-add-slot" class="btn btn-sm btn-outline">+追加</button>
+            <button id="btn-remove-slot" class="btn btn-sm btn-outline btn-danger">削除</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-enabled" checked> 有効
+          </label>
+        </div>
+        <div class="field">
+          <label>レイアウトの種類</label>
+          <div class="layout-grid">
+            <button class="layout-btn active" data-layout="lower-third">
+              <div class="layout-preview layout-prev-lower"></div>
+              <span>ローワーサード</span>
+            </button>
+            <button class="layout-btn" data-layout="card">
+              <div class="layout-preview layout-prev-card"></div>
+              <span>名刺</span>
+            </button>
+            <button class="layout-btn" data-layout="social">
+              <div class="layout-preview layout-prev-social"></div>
+              <span>SNSバー</span>
+            </button>
+            <button class="layout-btn" data-layout="telop">
+              <div class="layout-preview layout-prev-telop"></div>
+              <span>テロップ</span>
+            </button>
+            <button class="layout-btn" data-layout="mini">
+              <div class="layout-preview layout-prev-mini"></div>
+              <span>ミニラベル</span>
+            </button>
+            <button class="layout-btn" data-layout="schedule">
+              <div class="layout-preview layout-prev-schedule"></div>
+              <span>スケジュール</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- テキストタブ -->
+      <div class="tab-content" id="tab-text">
+        <div class="field" id="field-icon">
+          <label>アイコン（絵文字）</label>
+          <input type="text" id="opt-icon" value="" class="input input-sm" placeholder="例: 🎮">
+        </div>
+        <div class="field">
+          <label>ライン1</label>
+          <input type="text" id="opt-line1" value="配信者名" class="input">
+        </div>
+        <div class="field" id="field-line2">
+          <label>ライン2</label>
+          <input type="text" id="opt-line2" value="ゲーム実況中" class="input">
+        </div>
+        <div class="field" id="field-social" style="display:none">
+          <label>SNSリスト</label>
+          <div id="social-list"></div>
+          <button id="btn-add-social" class="btn btn-sm btn-outline">+ SNS追加</button>
+        </div>
+        <div class="field" id="field-schedule" style="display:none">
+          <label>スケジュールテキスト</label>
+          <input type="text" id="opt-scheduleText" value="次回配信: 土曜 20:00" class="input">
+        </div>
+        <div class="field">
+          <label>フォント</label>
+          <select id="opt-font" class="select">
+            <option value="Noto Sans JP">Noto Sans JP</option>
+            <option value="M PLUS Rounded 1c">M PLUS Rounded 1c</option>
+            <option value="Orbitron">Orbitron</option>
+            <option value="Zen Dots">Zen Dots</option>
+            <option value="DotGothic16">DotGothic16</option>
+            <option value="Rajdhani">Rajdhani</option>
+            <option value="Press Start 2P">Press Start 2P</option>
+            <option value="Kosugi Maru">Kosugi Maru</option>
+            <option value="Dela Gothic One">Dela Gothic One</option>
+            <option value="Rampart One">Rampart One</option>
+          </select>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>フォントサイズ1</label>
+            <input type="range" id="opt-fontSize1" min="12" max="48" value="24" class="range">
+            <span class="range-val" id="val-fontSize1">24px</span>
+          </div>
+          <div class="field">
+            <label>フォントサイズ2</label>
+            <input type="range" id="opt-fontSize2" min="10" max="32" value="16" class="range">
+            <span class="range-val" id="val-fontSize2">16px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- スタイルタブ -->
+      <div class="tab-content" id="tab-style">
+        <div class="field-row">
+          <div class="field">
+            <label>テキスト色</label>
+            <input type="color" id="opt-textColor" value="#ffffff" class="color-input">
+          </div>
+          <div class="field">
+            <label>アクセント色</label>
+            <input type="color" id="opt-accentColor" value="#00aaff" class="color-input">
+          </div>
+        </div>
+        <div class="field">
+          <label>背景色（RGBA）</label>
+          <input type="text" id="opt-bgColor" value="rgba(0,0,0,0.6)" class="input" placeholder="rgba(0,0,0,0.6)">
+        </div>
+        <div class="field">
+          <label>背景ブラー</label>
+          <input type="range" id="opt-bgBlur" min="0" max="20" value="0" class="range">
+          <span class="range-val" id="val-bgBlur">0px</span>
+        </div>
+        <div class="field">
+          <label>角丸</label>
+          <input type="range" id="opt-borderRadius" min="0" max="24" value="8" class="range">
+          <span class="range-val" id="val-borderRadius">8px</span>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-glow"> グロー（光彩）
+          </label>
+        </div>
+        <div class="sub-fields" id="glow-opts">
+          <div class="field">
+            <label>グロー色</label>
+            <input type="color" id="opt-glowColor" value="#00aaff" class="color-input">
+          </div>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-outline"> アウトライン（縁取り）
+          </label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-gradient"> グラデーション
+          </label>
+        </div>
+        <div class="sub-fields" id="gradient-opts">
+          <div class="field-row">
+            <div class="field">
+              <label>グラデ色1</label>
+              <input type="color" id="opt-gradColor1" value="#ff6ec7" class="color-input">
+            </div>
+            <div class="field">
+              <label>グラデ色2</label>
+              <input type="color" id="opt-gradColor2" value="#7873f5" class="color-input">
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-shadow"> ドロップシャドウ
+          </label>
+        </div>
+      </div>
+
+      <!-- テーマタブ -->
+      <div class="tab-content" id="tab-theme">
+        <div class="field">
+          <label>テーマ</label>
+          <div class="theme-grid">
+            <button class="theme-btn active" data-theme="neon">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0a0a2e,#1a0a3e);color:#00aaff;">Aa</div>
+              <span>ネオン</span>
+            </button>
+            <button class="theme-btn" data-theme="gaming">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#0d0d0d,#1a0a2e);color:#ff6ec7;">Aa</div>
+              <span>ゲーミング</span>
+            </button>
+            <button class="theme-btn" data-theme="minimal">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#1a1a1a,#2a2a2a);color:#ffffff;">Aa</div>
+              <span>ミニマル</span>
+            </button>
+            <button class="theme-btn" data-theme="pastel">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#fce4ec,#e1bee7);color:#5d4037;">Aa</div>
+              <span>パステル</span>
+            </button>
+            <button class="theme-btn" data-theme="retro">
+              <div class="theme-preview" style="background:linear-gradient(135deg,#001100,#002200);color:#00ff41;font-family:monospace;">Aa</div>
+              <span>レトロ</span>
+            </button>
+          </div>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label>位置</label>
+          <div class="position-grid">
+            <button class="position-btn" data-pos="top-left">&#8598;</button>
+            <button class="position-btn" data-pos="top-center">&#8593;</button>
+            <button class="position-btn" data-pos="top-right">&#8599;</button>
+            <button class="position-btn" data-pos="middle-left">&#8592;</button>
+            <button class="position-btn" data-pos="middle-center">&#9679;</button>
+            <button class="position-btn" data-pos="middle-right">&#8594;</button>
+            <button class="position-btn active" data-pos="bottom-left">&#8601;</button>
+            <button class="position-btn" data-pos="bottom-center">&#8595;</button>
+            <button class="position-btn" data-pos="bottom-right">&#8600;</button>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>オフセット X</label>
+            <input type="range" id="opt-offsetX" min="0" max="100" value="5" class="range">
+            <span class="range-val" id="val-offsetX">5%</span>
+          </div>
+          <div class="field">
+            <label>オフセット Y</label>
+            <input type="range" id="opt-offsetY" min="0" max="100" value="5" class="range">
+            <span class="range-val" id="val-offsetY">5%</span>
+          </div>
+        </div>
+        <div class="field">
+          <label>最大幅</label>
+          <input type="range" id="opt-maxWidth" min="200" max="800" value="500" class="range">
+          <span class="range-val" id="val-maxWidth">500px</span>
+        </div>
+        <div class="field">
+          <label>パディング</label>
+          <input type="range" id="opt-padding" min="4" max="32" value="12" class="range">
+          <span class="range-val" id="val-padding">12px</span>
+        </div>
+      </div>
+
+      <!-- アニメーションタブ -->
+      <div class="tab-content" id="tab-anim">
+        <div class="field">
+          <label>入場アニメーション</label>
+          <select id="opt-entrance" class="select">
+            <option value="slide-left">スライド（左から）</option>
+            <option value="slide-right">スライド（右から）</option>
+            <option value="slide-up">スライド（下から）</option>
+            <option value="fade">フェード</option>
+            <option value="none">なし</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>退場アニメーション</label>
+          <select id="opt-exit" class="select">
+            <option value="slide-left">スライド（左へ）</option>
+            <option value="slide-right">スライド（右へ）</option>
+            <option value="slide-up">スライド（上へ）</option>
+            <option value="fade">フェード</option>
+            <option value="none">なし</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>デュレーション</label>
+          <input type="range" id="opt-duration" min="200" max="2000" step="100" value="600" class="range">
+          <span class="range-val" id="val-duration">600ms</span>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <label class="checkbox-label">
+            <input type="checkbox" id="opt-autoHide"> 自動非表示
+          </label>
+        </div>
+        <div class="sub-fields" id="autohide-opts">
+          <div class="field">
+            <label>非表示までの時間</label>
+            <input type="range" id="opt-autoHideDelay" min="3000" max="60000" step="1000" value="10000" class="range">
+            <span class="range-val" id="val-autoHideDelay">10s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 保存タブ -->
+      <div class="tab-content" id="tab-save">
+        <h3 class="section-title">テンプレート</h3>
+        <div class="template-grid" id="template-grid"></div>
+        <hr class="divider">
+        <h3 class="section-title">プリセット</h3>
+        <div class="preset-grid">
+          <div class="preset-slot" data-slot="1">
+            <button class="btn btn-sm btn-outline" data-action="save">保存1</button>
+            <button class="btn btn-sm" data-action="load">読込1</button>
+            <button class="btn btn-sm btn-outline btn-danger" data-action="delete">削除1</button>
+          </div>
+          <div class="preset-slot" data-slot="2">
+            <button class="btn btn-sm btn-outline" data-action="save">保存2</button>
+            <button class="btn btn-sm" data-action="load">読込2</button>
+            <button class="btn btn-sm btn-outline btn-danger" data-action="delete">削除2</button>
+          </div>
+          <div class="preset-slot" data-slot="3">
+            <button class="btn btn-sm btn-outline" data-action="save">保存3</button>
+            <button class="btn btn-sm" data-action="load">読込3</button>
+            <button class="btn btn-sm btn-outline btn-danger" data-action="delete">削除3</button>
+          </div>
+          <div class="preset-slot" data-slot="4">
+            <button class="btn btn-sm btn-outline" data-action="save">保存4</button>
+            <button class="btn btn-sm" data-action="load">読込4</button>
+            <button class="btn btn-sm btn-outline btn-danger" data-action="delete">削除4</button>
+          </div>
+          <div class="preset-slot" data-slot="5">
+            <button class="btn btn-sm btn-outline" data-action="save">保存5</button>
+            <button class="btn btn-sm" data-action="load">読込5</button>
+            <button class="btn btn-sm btn-outline btn-danger" data-action="delete">削除5</button>
+          </div>
+        </div>
+        <hr class="divider">
+        <h3 class="section-title">エクスポート / インポート</h3>
+        <div class="field-row">
+          <button id="btn-export" class="btn btn-outline">エクスポート</button>
+          <button id="btn-import" class="btn btn-outline">インポート</button>
+          <input type="file" id="file-import" accept=".json" style="display:none">
+        </div>
+      </div>
+    </div>
+
+    <!-- 右: プレビュー -->
+    <div class="preview-panel">
+      <div class="preview-header">
+        <span>プレビュー</span>
+        <div class="preview-actions">
+          <button id="btn-test-show" class="btn btn-sm btn-primary">表示テスト</button>
+          <button id="btn-test-hide" class="btn btn-sm btn-outline">非表示テスト</button>
+        </div>
+        <div class="preview-size">
+          <button class="size-btn active" data-w="800" data-h="450">16:9</button>
+          <button class="size-btn" data-w="800" data-h="600">4:3</button>
+        </div>
+      </div>
+      <div class="preview-wrapper" id="preview-wrapper">
+        <iframe id="preview-frame" src="index.html?preview=true"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/settings.js"></script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stream Soundboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="header-left">
+      <h1 class="header-title">Stream Soundboard</h1>
+      <span class="header-sub">配信用サウンドボード</span>
+    </div>
+    <div class="header-right">
+      <label class="vol-label">
+        <span>🔊</span>
+        <input type="range" id="master-vol" min="0" max="1" step="0.05" value="0.8" class="vol-slider">
+        <span id="vol-val" class="vol-val">80%</span>
+      </label>
+      <button id="btn-stop-all" class="btn btn-danger" title="全停止">■ 全停止</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <button id="btn-add" class="btn btn-primary">＋ サウンド追加</button>
+      <button id="btn-add-group" class="btn btn-outline">＋ グループ追加</button>
+    </div>
+    <div class="toolbar-right">
+      <input type="text" id="search" class="input search-input" placeholder="🔍 検索...">
+      <button id="btn-export" class="btn btn-outline btn-sm">エクスポート</button>
+      <button id="btn-import" class="btn btn-outline btn-sm">インポート</button>
+      <input type="file" id="file-import" accept=".json" style="display:none">
+    </div>
+  </div>
+
+  <div id="board" class="board"></div>
+
+  <!-- サウンド追加モーダル -->
+  <div id="modal-overlay" class="modal-overlay hidden">
+    <div class="modal">
+      <h2 class="modal-title" id="modal-title">サウンド追加</h2>
+      <div class="field">
+        <label>名前</label>
+        <input type="text" id="snd-name" class="input" placeholder="効果音の名前">
+      </div>
+      <div class="field">
+        <label>音声ファイル</label>
+        <input type="file" id="snd-file" accept="audio/*" class="input">
+        <p class="hint">MP3/WAV/OGG対応。ファイルはブラウザ内に保存されます。</p>
+      </div>
+      <div class="field">
+        <label>色</label>
+        <div class="color-grid" id="color-grid"></div>
+      </div>
+      <div class="field">
+        <label>グループ</label>
+        <select id="snd-group" class="select">
+          <option value="">なし</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>ショートカットキー（任意）</label>
+        <input type="text" id="snd-hotkey" class="input input-sm" placeholder="例: 1, a, F1" maxlength="10">
+      </div>
+      <div class="modal-actions">
+        <button id="btn-modal-cancel" class="btn btn-outline">キャンセル</button>
+        <button id="btn-modal-save" class="btn btn-primary">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- グループ追加モーダル -->
+  <div id="group-modal-overlay" class="modal-overlay hidden">
+    <div class="modal modal-sm">
+      <h2 class="modal-title">グループ追加</h2>
+      <div class="field">
+        <label>グループ名</label>
+        <input type="text" id="grp-name" class="input" placeholder="例: SE, BGM, ジングル">
+      </div>
+      <div class="modal-actions">
+        <button id="btn-grp-cancel" class="btn btn-outline">キャンセル</button>
+        <button id="btn-grp-save" class="btn btn-primary">追加</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
