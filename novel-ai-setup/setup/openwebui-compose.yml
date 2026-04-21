@@ -1,0 +1,21 @@
+services:
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: always
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui:/app/backend/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      # Windows ホスト上の Ollama に接続
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # R-18 を扱うのでローカル限定で使う前提、アカウント登録は任意
+      - ENABLE_SIGNUP=true
+      - DEFAULT_USER_ROLE=admin
+      - WEBUI_SECRET_KEY=change-me-to-something-random-on-first-use
+
+volumes:
+  open-webui:
