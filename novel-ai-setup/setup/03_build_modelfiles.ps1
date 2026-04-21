@@ -1,10 +1,12 @@
-# 03_build_modelfiles.ps1
+﻿# 03_build_modelfiles.ps1
 # modelfiles/ 配下の *.Modelfile を全て `ollama create` で登録する
 # ファイル名(拡張子除く) = モデル名になる
 #
 # 例: modelfiles/novel-general.Modelfile → `ollama run novel-general`
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ModelfileDir = Join-Path (Split-Path -Parent $ScriptDir) "modelfiles"

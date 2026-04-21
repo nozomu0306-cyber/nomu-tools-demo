@@ -1,9 +1,11 @@
-# 02_pull_models.ps1
+﻿# 02_pull_models.ps1
 # 5つのベースモデルを Ollama に pull する
 # 合計: 約62GB、ネット速度次第で数時間
 # 途中で切れても `ollama pull` は再開可能
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $models = @(
     @{ name = "qwen2.5:14b-instruct-q4_K_M";              size = "約9GB";  purpose = "全年齢メイン (速い)" },

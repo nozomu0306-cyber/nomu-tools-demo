@@ -1,9 +1,11 @@
-# 05_start_openwebui.ps1
+﻿# 05_start_openwebui.ps1
 # Open WebUI を Docker で起動する
 # 起動後、ブラウザで http://localhost:3000 を開けばOK
 # 初回は管理者アカウント作成、Ollamaのモデルは自動検出される
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 $ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ComposePath = Join-Path $ScriptDir "openwebui-compose.yml"

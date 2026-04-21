@@ -1,4 +1,4 @@
-# tools/epub-to-txt.ps1
+﻿# tools/epub-to-txt.ps1
 # EPUB を Open WebUI の Knowledge 機能に入れる前に UTF-8 TXT に変換する。
 # 複数ファイル対応。フォルダ指定で一括処理可能。
 #
@@ -19,6 +19,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 function Convert-EpubToTxt {
     param([string]$EpubPath)

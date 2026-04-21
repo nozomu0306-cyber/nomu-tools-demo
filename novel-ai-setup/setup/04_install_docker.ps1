@@ -1,8 +1,10 @@
-# 04_install_docker.ps1
+﻿# 04_install_docker.ps1
 # Docker Desktop for Windows をインストールする
 # Open WebUI を動かすのに必要
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "Docker Desktop のインストールを確認します..." -ForegroundColor Cyan
 

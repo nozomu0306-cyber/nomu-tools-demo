@@ -1,4 +1,4 @@
-# 01_install_ollama.ps1
+﻿# 01_install_ollama.ps1
 # Ollama for Windows をインストールする
 #
 # - winget が使える → winget で Ollama.Ollama をインストール
@@ -6,6 +6,8 @@
 # - 最後に `ollama --version` で動作確認
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host "Ollama のインストールを確認します..." -ForegroundColor Cyan
 

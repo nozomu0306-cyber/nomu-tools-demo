@@ -1,4 +1,4 @@
-# 00_run_all.ps1
+﻿# 00_run_all.ps1
 # のむさん専用 ローカル小説AI セットアップ - 一括実行スクリプト
 #
 # 使い方:
@@ -9,6 +9,9 @@
 # 途中で止まったら、個別スクリプトを手動で再実行できます。
 
 $ErrorActionPreference = "Stop"
+# コンソール出力を UTF-8 に固定（日本語の文字化け防止）
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 Write-Host ""

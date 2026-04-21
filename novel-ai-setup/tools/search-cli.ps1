@@ -1,4 +1,4 @@
-# tools/search-cli.ps1
+﻿# tools/search-cli.ps1
 # DuckDuckGo 検索→結果を Ollama のモデルに流す軽量スクリプト（おまけ）
 #
 # Open WebUI を使えば GUI で同じことができるので、基本は Open WebUI 推奨。
@@ -22,6 +22,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
 Write-Host ""
 Write-Host "[1/3] DuckDuckGo で検索中: $Query" -ForegroundColor Cyan
