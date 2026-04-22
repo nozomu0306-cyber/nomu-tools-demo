@@ -1,0 +1,43 @@
+@echo off
+REM =========================================================
+REM  のむさん専用 webui-user.bat
+REM  RTX 5060 Ti 8GB VRAM / Blackwell (sm_120) 世代向け最適化
+REM =========================================================
+
+REM Python 3.10 ランチャー経由で呼ぶ
+set PYTHON=py -3.10
+set GIT=
+set VENV_DIR=
+
+REM -----------------------------------------
+REM  起動引数 (COMMANDLINE_ARGS)
+REM -----------------------------------------
+REM  --opt-sdp-attention : xformers 代替 (RTX 50 系で安定)
+REM  --cuda-malloc       : VRAM 断片化対策
+REM  --disable-nan-check : 生成中の誤停止を避ける
+REM  --api               : Open WebUI 等から呼べるようにAPI公開
+REM  --listen            : LAN 内他デバイスからアクセス可 (不要なら外す)
+REM -----------------------------------------
+set COMMANDLINE_ARGS=--opt-sdp-attention --cuda-malloc --disable-nan-check --api
+
+REM -----------------------------------------
+REM  RTX 50 系 Blackwell 用 PyTorch (CUDA 12.8 対応)
+REM  Forge が自前で Torch を入れるが、sm_120 非対応エラーが出たら
+REM  下記をコメント解除 (先頭の REM を外す)
+REM -----------------------------------------
+REM set TORCH_COMMAND=pip install --pre torch torchvision --index-url https://download.pytorch.org/whl/nightly/cu128
+
+REM -----------------------------------------
+REM  VRAM 8GB 向け (必要時にコメント解除)
+REM -----------------------------------------
+REM --medvram        : VRAM 使用量を抑える (少し遅くなる)
+REM --medvram-sdxl   : SDXL モデルだけ medvram
+REM --lowvram        : 更に絞る (かなり遅い、最後の手段)
+REM set COMMANDLINE_ARGS=%COMMANDLINE_ARGS% --medvram-sdxl
+
+REM -----------------------------------------
+REM  UI 言語
+REM -----------------------------------------
+REM 日本語化は拡張機能 sd-webui-translations-ja から入れる (別途)
+
+call webui.bat
