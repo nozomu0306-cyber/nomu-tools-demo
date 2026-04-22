@@ -43,13 +43,31 @@ $wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
 if ($wingetCmd) {
     Write-Host "winget で Docker Desktop をインストールします..." -ForegroundColor Cyan
     Write-Host "(約500MB、数分かかります)" -ForegroundColor Yellow
-    try {
-        winget install --id Docker.DockerDesktop --silent --accept-package-agreements --accept-source-agreements
-        Write-Host "✓ Docker Desktop インストール完了" -ForegroundColor Green
-    } catch {
-        Write-Host "✗ winget インストール失敗。公式ページからインストーラを手動DLしてください: https://www.docker.com/products/docker-desktop/" -ForegroundColor Red
+    Write-Host "" -ForegroundColor Yellow
+    Write-Host "⚠ 重要: Docker のインストーラが UAC プロンプト（管理者権限の確認）を出します。" -ForegroundColor Yellow
+    Write-Host "  『このアプリがデバイスに変更を加えることを許可しますか？』→ 必ず『はい』を押してください。" -ForegroundColor Yellow
+    Write-Host "  『いいえ』を押すとインストール失敗します。" -ForegroundColor Yellow
+    Write-Host "" -ForegroundColor Yellow
+
+    winget install --id Docker.DockerDesktop --silent --accept-package-agreements --accept-source-agreements
+    $wingetExit = $LASTEXITCODE
+
+    # winget は非ゼロ終了コードを返しても例外を出さないので、$LASTEXITCODE で判定
+    if ($wingetExit -ne 0) {
+        Write-Host ""
+        Write-Host "✗ winget インストール失敗 (exit code: $wingetExit)" -ForegroundColor Red
+        if ($wingetExit -eq 4294967291) {
+            Write-Host "  原因: UAC プロンプトで『いいえ』/キャンセルが押された可能性が高いです。" -ForegroundColor Yellow
+        }
+        Write-Host "  対処:" -ForegroundColor Yellow
+        Write-Host "    1) このスクリプト (.\04_install_docker.ps1) を再実行"
+        Write-Host "    2) UAC プロンプトで必ず『はい』を押す"
+        Write-Host "    3) それでも駄目なら手動インストール:"
+        Write-Host "       https://www.docker.com/products/docker-desktop/"
         exit 1
     }
+
+    Write-Host "✓ Docker Desktop インストール完了" -ForegroundColor Green
 } else {
     Write-Host "✗ winget が使えません。公式ページから Docker Desktop インストーラを手動でダウンロードしてください:" -ForegroundColor Red
     Write-Host "  https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
