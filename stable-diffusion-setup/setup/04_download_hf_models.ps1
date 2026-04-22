@@ -61,9 +61,21 @@ if ($readyConfirm -eq "N" -or $readyConfirm -eq "n") {
 # - SecureString は古い PowerShell で貼り付け不可のため使わない
 
 if (-not [string]::IsNullOrWhiteSpace($env:HF_TOKEN)) {
+    $existing = $env:HF_TOKEN.Trim()
+    $existingFmt = "$($existing.Substring(0,[Math]::Min(5,$existing.Length)))...$($existing.Substring([Math]::Max(0,$existing.Length-4)))"
     Write-Host ""
-    Write-Host "✓ 環境変数 HF_TOKEN を検出、それを使用します。" -ForegroundColor Green
-    $Token = $env:HF_TOKEN
+    Write-Host "環境変数 HF_TOKEN を検出: $existingFmt (長さ $($existing.Length) 文字)" -ForegroundColor Yellow
+    Write-Host "これは『今このセッションで設定したトークン』ですか？ 違う場合は古いトークンが残っている可能性。" -ForegroundColor Yellow
+    $useExisting = Read-Host "このトークンを使いますか？ (Y/n)"
+    if ($useExisting -eq "n" -or $useExisting -eq "N") {
+        Write-Host "古いトークンを破棄します。一度スクリプトを終了するので、PowerShell を閉じて再度開いてから:" -ForegroundColor Yellow
+        Write-Host "  Remove-Item Env:\HF_TOKEN" -ForegroundColor Cyan
+        Write-Host "  `$env:HF_TOKEN = `"hf_新しいトークン`"" -ForegroundColor Cyan
+        Write-Host "  .\04_download_hf_models.ps1" -ForegroundColor Cyan
+        exit 0
+    }
+    Write-Host "✓ このトークンを使用します。" -ForegroundColor Green
+    $Token = $existing
 } else {
     Write-Host ""
     Write-Host "Access Token を入力してください。" -ForegroundColor Cyan
