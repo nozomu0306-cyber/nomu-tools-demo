@@ -38,41 +38,77 @@ if ($dockerCmd) {
     } catch { }
 }
 
-# winget でインストール
-$wingetCmd = Get-Command winget -ErrorAction SilentlyContinue
-if ($wingetCmd) {
-    Write-Host "winget で Docker Desktop をインストールします..." -ForegroundColor Cyan
-    Write-Host "(約500MB、数分かかります)" -ForegroundColor Yellow
-    Write-Host "" -ForegroundColor Yellow
-    Write-Host "⚠ 重要: Docker のインストーラが UAC プロンプト（管理者権限の確認）を出します。" -ForegroundColor Yellow
-    Write-Host "  『このアプリがデバイスに変更を加えることを許可しますか？』→ 必ず『はい』を押してください。" -ForegroundColor Yellow
-    Write-Host "  『いいえ』を押すとインストール失敗します。" -ForegroundColor Yellow
-    Write-Host "" -ForegroundColor Yellow
-
-    winget install --id Docker.DockerDesktop --silent --accept-package-agreements --accept-source-agreements
-    $wingetExit = $LASTEXITCODE
-
-    # winget は非ゼロ終了コードを返しても例外を出さないので、$LASTEXITCODE で判定
-    if ($wingetExit -ne 0) {
-        Write-Host ""
-        Write-Host "✗ winget インストール失敗 (exit code: $wingetExit)" -ForegroundColor Red
-        if ($wingetExit -eq 4294967291) {
-            Write-Host "  原因: UAC プロンプトで『いいえ』/キャンセルが押された可能性が高いです。" -ForegroundColor Yellow
-        }
-        Write-Host "  対処:" -ForegroundColor Yellow
-        Write-Host "    1) このスクリプト (.\04_install_docker.ps1) を再実行"
-        Write-Host "    2) UAC プロンプトで必ず『はい』を押す"
-        Write-Host "    3) それでも駄目なら手動インストール:"
-        Write-Host "       https://www.docker.com/products/docker-desktop/"
+# 前回のインストール失敗で残った壊れたフォルダをチェック
+$leftoverData = "C:\ProgramData\DockerDesktop"
+if (Test-Path $leftoverData) {
+    Write-Host "⚠ 前回のインストール試行で残った $leftoverData を検出しました。" -ForegroundColor Yellow
+    Write-Host "  これが残っているとインストールが失敗するのでクリーンアップします..." -ForegroundColor Yellow
+    try {
+        Get-Service *docker* -ErrorAction SilentlyContinue | Stop-Service -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $leftoverData -Recurse -Force -ErrorAction Stop
+        Write-Host "  ✓ クリーンアップ完了" -ForegroundColor Green
+    } catch {
+        Write-Host "  ✗ 削除失敗: $_" -ForegroundColor Red
+        Write-Host "    対処: 一度 Windows を再起動してからこのスクリプトを再実行してください。" -ForegroundColor Yellow
         exit 1
     }
+}
+$leftoverProg = "C:\Program Files\Docker"
+if (Test-Path $leftoverProg) {
+    Write-Host "⚠ $leftoverProg も残っているのでクリーンアップします..." -ForegroundColor Yellow
+    Remove-Item -Path $leftoverProg -Recurse -Force -ErrorAction SilentlyContinue
+}
 
-    Write-Host "✓ Docker Desktop インストール完了" -ForegroundColor Green
-} else {
-    Write-Host "✗ winget が使えません。公式ページから Docker Desktop インストーラを手動でダウンロードしてください:" -ForegroundColor Red
-    Write-Host "  https://www.docker.com/products/docker-desktop/" -ForegroundColor Yellow
+# 公式インストーラを直接ダウンロードして管理者権限で実行
+# (winget は内部インストーラの失敗を exit 0 で隠すので使わない)
+$installerUrl  = "https://desktop.docker.com/win/main/amd64/Docker%20Desktop%20Installer.exe"
+$installerPath = Join-Path $env:TEMP "DockerDesktopInstaller.exe"
+
+Write-Host ""
+Write-Host "Docker Desktop 公式インストーラをダウンロードします..." -ForegroundColor Cyan
+Write-Host "(約600MB、数分かかります)" -ForegroundColor Yellow
+
+try {
+    Invoke-WebRequest -Uri $installerUrl -OutFile $installerPath -UseBasicParsing
+    Write-Host "  ✓ ダウンロード完了" -ForegroundColor Green
+} catch {
+    Write-Host "✗ ダウンロード失敗: $_" -ForegroundColor Red
+    Write-Host "  ネット接続を確認して再実行してください。" -ForegroundColor Yellow
     exit 1
 }
+
+Write-Host ""
+Write-Host "⚠ 重要: この後 UAC プロンプト（管理者権限の確認）が出ます。" -ForegroundColor Yellow
+Write-Host "  『このアプリがデバイスに変更を加えることを許可しますか？』→ 必ず『はい』を押してください。" -ForegroundColor Yellow
+Write-Host "" -ForegroundColor Yellow
+
+try {
+    $proc = Start-Process -FilePath $installerPath `
+        -ArgumentList "install", "--accept-license", "--backend=wsl-2" `
+        -Wait -PassThru -Verb RunAs
+    $installerExit = $proc.ExitCode
+} catch {
+    Write-Host "✗ インストーラ起動失敗: $_" -ForegroundColor Red
+    exit 1
+}
+
+if ($installerExit -ne 0) {
+    Write-Host ""
+    Write-Host "✗ Docker インストーラ失敗 (exit code: $installerExit)" -ForegroundColor Red
+    Write-Host "  対処:" -ForegroundColor Yellow
+    Write-Host "    - UAC プロンプトで『はい』を押したか確認"
+    Write-Host "    - 一度 Windows を再起動してから再実行"
+    Write-Host "    - インストーラを直接手動実行: $installerPath"
+    exit 1
+}
+
+# 実ファイルで成功確認
+$dockerDesktopExe = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+if (-not (Test-Path $dockerDesktopExe)) {
+    Write-Host "✗ Docker Desktop の実行ファイルが見つかりません。インストールが完了していない可能性があります。" -ForegroundColor Red
+    exit 1
+}
+Write-Host "✓ Docker Desktop インストール完了" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "⚠ 重要: Docker Desktop 初回起動時の注意点" -ForegroundColor Yellow
