@@ -55,34 +55,79 @@ if ($readyConfirm -eq "N" -or $readyConfirm -eq "n") {
     exit 0
 }
 
-# huggingface-cli login → 新仕様では huggingface_hub.login() を直接呼ぶ形に統一
-# + 環境変数 HF_TOKEN をこのプロセスに設定（子プロセスの py -c も継承する）
+# HuggingFace 認証
+# - SecureString は PowerShell バージョンによって貼り付けが効かないことがあるため、
+#   通常の Read-Host を使い "入力後すぐに環境変数に格納→画面からも消す" 方針に変更
+# - トークンの先頭/末尾だけサニティチェックで表示（中身は出さない）
+
 Write-Host ""
-Write-Host "Access Token を入力してください (入力中は伏字 * で表示されます):" -ForegroundColor Cyan
-$secToken = Read-Host -AsSecureString
-$BSTR     = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secToken)
-$Token    = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
-[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR) | Out-Null
+Write-Host "Access Token を入力してください (Ctrl+V で貼り付け可)。" -ForegroundColor Cyan
+Write-Host "入力後 Enter を押してください。" -ForegroundColor Cyan
+$Token = Read-Host
+Clear-Host  # 画面からトークン表示を消す
+Write-Host "Access Token を受領しました。" -ForegroundColor Cyan
 
 if ([string]::IsNullOrWhiteSpace($Token)) {
     Write-Host "✗ トークンが空です。" -ForegroundColor Red
     exit 1
 }
 
-# 環境変数経由で認証 (huggingface_hub は HF_TOKEN を自動参照)
-$env:HF_TOKEN = $Token
+$Token = $Token.Trim()
 
-# 動作確認 (whoami)
+# サニティチェック: HF トークンは hf_ で始まる長さ 30+ の文字列
+if (-not $Token.StartsWith("hf_")) {
+    Write-Host "⚠ トークンが 'hf_' で始まっていません (現在: '$($Token.Substring(0,[Math]::Min(3,$Token.Length)))...')" -ForegroundColor Yellow
+    Write-Host "  HuggingFace のトークンは 'hf_xxxxx...' 形式です。コピー漏れの可能性。" -ForegroundColor Yellow
+    $cont = Read-Host "それでも続けますか？ (y/N)"
+    if ($cont -ne "y") { exit 1 }
+}
+if ($Token.Length -lt 20) {
+    Write-Host "⚠ トークンが短すぎます ($($Token.Length) 文字)。コピー漏れの可能性が高いです。" -ForegroundColor Yellow
+    Write-Host "  HuggingFace のトークンは通常 30〜40 文字です。" -ForegroundColor Yellow
+    $cont = Read-Host "それでも続けますか？ (y/N)"
+    if ($cont -ne "y") { exit 1 }
+}
+Write-Host "  トークン長: $($Token.Length) 文字 / 形式: $($Token.Substring(0,3))...$($Token.Substring($Token.Length-4))" -ForegroundColor Cyan
+
+# 環境変数経由で認証 (両方の名前を設定 → huggingface_hub のバージョン互換性確保)
+$env:HF_TOKEN = $Token
+$env:HUGGING_FACE_HUB_TOKEN = $Token
+
+# 動作確認: 一時 .py ファイルを作成して詳細エラーを取りやすくする
 Write-Host ""
 Write-Host "ログイン確認中..." -ForegroundColor Cyan
-$whoami = py -3.10 -c "from huggingface_hub import HfApi; print(HfApi().whoami()['name'])" 2>&1
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "✗ ログイン失敗。トークンが無効か、HFアカウントに問題があります。" -ForegroundColor Red
-    Write-Host "  出力: $whoami" -ForegroundColor Red
-    Write-Host "  対処:" -ForegroundColor Yellow
-    Write-Host "    1) https://huggingface.co/settings/tokens でトークンを再発行"
-    Write-Host "    2) Read 権限で発行されているか確認"
-    Write-Host "    3) このスクリプトを再実行"
+
+$pyTmp = [System.IO.Path]::GetTempFileName() + ".py"
+@"
+import os, sys, traceback
+try:
+    from huggingface_hub import login, HfApi
+    token = os.environ.get('HF_TOKEN', '').strip()
+    if not token:
+        print('ERROR_EMPTY_TOKEN', file=sys.stderr); sys.exit(2)
+    login(token=token, add_to_git_credential=False)
+    name = HfApi().whoami().get('name', '?')
+    print(name)
+except Exception:
+    traceback.print_exc()
+    sys.exit(1)
+"@ | Out-File -FilePath $pyTmp -Encoding UTF8 -Force
+
+$whoami = py -3.10 $pyTmp 2>&1
+$pyExit = $LASTEXITCODE
+Remove-Item $pyTmp -Force -ErrorAction SilentlyContinue
+
+if ($pyExit -ne 0) {
+    Write-Host "✗ ログイン失敗 (exit $pyExit)" -ForegroundColor Red
+    Write-Host "  --- Python エラー全文 ---" -ForegroundColor Yellow
+    Write-Host $whoami -ForegroundColor Red
+    Write-Host "  ------------------------" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Host "  考えられる原因:" -ForegroundColor Yellow
+    Write-Host "    a) トークンが無効: https://huggingface.co/settings/tokens で再発行"
+    Write-Host "    b) 貼り付け漏れ・改行混入: 上記の『トークン長』が 30+ 文字あるか確認"
+    Write-Host "    c) Read 権限不足: Classic Token の Read で発行する"
+    Write-Host "    d) ネット接続: huggingface.co に接続できるか確認"
     exit 1
 }
 Write-Host "✓ ログイン成功: $whoami" -ForegroundColor Green
