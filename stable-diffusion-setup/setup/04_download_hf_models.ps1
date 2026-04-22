@@ -56,16 +56,25 @@ if ($readyConfirm -eq "N" -or $readyConfirm -eq "n") {
 }
 
 # HuggingFace 認証
-# - SecureString は PowerShell バージョンによって貼り付けが効かないことがあるため、
-#   通常の Read-Host を使い "入力後すぐに環境変数に格納→画面からも消す" 方針に変更
-# - トークンの先頭/末尾だけサニティチェックで表示（中身は出さない）
+# - 既に $env:HF_TOKEN がセット済みならそれを使う (環境変数経由が一番確実)
+# - そうでなければ Read-Host で受け取る (通常の Read-Host は Ctrl+V 貼り付け可)
+# - SecureString は古い PowerShell で貼り付け不可のため使わない
 
-Write-Host ""
-Write-Host "Access Token を入力してください (Ctrl+V で貼り付け可)。" -ForegroundColor Cyan
-Write-Host "入力後 Enter を押してください。" -ForegroundColor Cyan
-$Token = Read-Host
-Clear-Host  # 画面からトークン表示を消す
-Write-Host "Access Token を受領しました。" -ForegroundColor Cyan
+if (-not [string]::IsNullOrWhiteSpace($env:HF_TOKEN)) {
+    Write-Host ""
+    Write-Host "✓ 環境変数 HF_TOKEN を検出、それを使用します。" -ForegroundColor Green
+    $Token = $env:HF_TOKEN
+} else {
+    Write-Host ""
+    Write-Host "Access Token を入力してください。" -ForegroundColor Cyan
+    Write-Host "  - PowerShell 上で Ctrl+V でも 右クリック でも貼り付け可能" -ForegroundColor Yellow
+    Write-Host "  - うまく貼れない場合は一度キャンセル (Ctrl+C) して、" -ForegroundColor Yellow
+    Write-Host "    『\$env:HF_TOKEN = `"hf_xxxxx...`"』を実行してから本スクリプトを再実行" -ForegroundColor Yellow
+    Write-Host ""
+    $Token = Read-Host "Token"
+    Clear-Host  # 画面からトークン表示を消す
+    Write-Host "Access Token を受領しました。" -ForegroundColor Cyan
+}
 
 if ([string]::IsNullOrWhiteSpace($Token)) {
     Write-Host "✗ トークンが空です。" -ForegroundColor Red
