@@ -8,10 +8,16 @@
 - インターネット接続（ダウンロード合計 約 63GB）
 - ストレージ空き 80GB 以上
 - PowerShell を「**管理者として実行**」で開くこと
-- 実行ポリシー設定（各 PowerShell セッションで一度）:
+- 実行ポリシー設定（**PowerShell ウィンドウを開き直すたびに、毎回一度打つ**）:
   ```powershell
   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
   ```
+  > `-Scope Process` はそのウィンドウ限定なので、新しいウィンドウでは再度この 1 行が必要。
+  > 毎回打ちたくない場合は、ユーザー単位で一度だけ緩める:
+  > ```powershell
+  > Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+  > ```
+  > `RemoteSigned` ならローカル .ps1 は実行可 / ネット DL スクリプトは署名要求で比較的安全。
 
 ---
 

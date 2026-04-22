@@ -41,6 +41,18 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
 .\00_run_all.ps1
 ```
 
+> **⚠ 重要:** `Set-ExecutionPolicy -Scope Process ...` は **その PowerShell ウィンドウだけ** で有効です。
+> 一度閉じて新しいウィンドウで個別スクリプト（`.\04_install_docker.ps1` など）を動かす時は、毎回その前に
+> ```powershell
+> Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+> ```
+> を打ってください。
+> 毎回打つのが面倒なら一度だけ:
+> ```powershell
+> Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned -Force
+> ```
+> を実行しておけば、以降このユーザーでは不要になります（ローカル .ps1 は実行可、ネット DL スクリプトは署名要求のままで比較的安全）。
+
 これで
 
 1. Ollama インストール
