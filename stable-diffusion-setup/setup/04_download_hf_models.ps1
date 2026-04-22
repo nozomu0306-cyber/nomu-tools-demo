@@ -122,8 +122,12 @@ except Exception:
     sys.exit(1)
 "@ | Out-File -FilePath $pyTmp -Encoding UTF8 -Force
 
-$whoami = py -3.10 $pyTmp 2>&1
+# 一時的に ErrorActionPreference を緩める (huggingface_hub の Note メッセージで止まらないように)
+$prevPref = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+$whoami = & py -3.10 $pyTmp 2>&1 | Out-String
 $pyExit = $LASTEXITCODE
+$ErrorActionPreference = $prevPref
 Remove-Item $pyTmp -Force -ErrorAction SilentlyContinue
 
 if ($pyExit -ne 0) {
@@ -173,8 +177,14 @@ for ($i = 0; $i -lt $downloads.Count; $i++) {
         "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='$($d.repo)', filename='$($d.file)', local_dir=r'$($d.dest)')"
     )
 
+    # huggingface_hub が stderr に Note を吐くので ErrorActionPreference を一時緩和
+    $prevPref = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     & py @pyArgs
-    if ($LASTEXITCODE -ne 0) {
+    $dlExit = $LASTEXITCODE
+    $ErrorActionPreference = $prevPref
+
+    if ($dlExit -ne 0) {
         Write-Host "  ✗ DL 失敗: $($d.repo) / $($d.file)" -ForegroundColor Red
         $failed += "$($d.repo) / $($d.file)"
     } else {
