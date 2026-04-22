@@ -55,14 +55,37 @@ if ($readyConfirm -eq "N" -or $readyConfirm -eq "n") {
     exit 0
 }
 
-# huggingface-cli login
+# huggingface-cli login → 新仕様では huggingface_hub.login() を直接呼ぶ形に統一
+# + 環境変数 HF_TOKEN をこのプロセスに設定（子プロセスの py -c も継承する）
 Write-Host ""
-Write-Host "Access Token を貼り付けてください (貼り付け時は何も表示されないのが仕様):" -ForegroundColor Cyan
-py -3.10 -m huggingface_hub.commands.huggingface_cli login
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "✗ ログイン失敗。" -ForegroundColor Red
+Write-Host "Access Token を入力してください (入力中は伏字 * で表示されます):" -ForegroundColor Cyan
+$secToken = Read-Host -AsSecureString
+$BSTR     = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secToken)
+$Token    = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR)
+[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR) | Out-Null
+
+if ([string]::IsNullOrWhiteSpace($Token)) {
+    Write-Host "✗ トークンが空です。" -ForegroundColor Red
     exit 1
 }
+
+# 環境変数経由で認証 (huggingface_hub は HF_TOKEN を自動参照)
+$env:HF_TOKEN = $Token
+
+# 動作確認 (whoami)
+Write-Host ""
+Write-Host "ログイン確認中..." -ForegroundColor Cyan
+$whoami = py -3.10 -c "from huggingface_hub import HfApi; print(HfApi().whoami()['name'])" 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "✗ ログイン失敗。トークンが無効か、HFアカウントに問題があります。" -ForegroundColor Red
+    Write-Host "  出力: $whoami" -ForegroundColor Red
+    Write-Host "  対処:" -ForegroundColor Yellow
+    Write-Host "    1) https://huggingface.co/settings/tokens でトークンを再発行"
+    Write-Host "    2) Read 権限で発行されているか確認"
+    Write-Host "    3) このスクリプトを再実行"
+    exit 1
+}
+Write-Host "✓ ログイン成功: $whoami" -ForegroundColor Green
 
 # ダウンロードするファイルの一覧
 # repo_id, filename, local_dir の三つ組
