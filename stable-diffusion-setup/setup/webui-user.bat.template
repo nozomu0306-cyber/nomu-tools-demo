@@ -44,10 +44,12 @@ REM -----------------------------------------
 REM  CLIP インストール問題の恒久対策
 REM  (setuptools 81+ で pkg_resources が消えた件、Forge の CLIP インストールが死ぬ)
 REM  venv ができてれば CLIP を先にインストール (既にあればスキップされる)
+REM  + numpy ABI 互換性対策 (mediapipe が numpy 2.x を引いてきて scikit-image が壊れるのを防ぐ)
 REM -----------------------------------------
 if exist "%~dp0venv\Scripts\python.exe" (
     "%~dp0venv\Scripts\python.exe" -m pip install --quiet "setuptools<81" wheel >nul 2>&1
     "%~dp0venv\Scripts\python.exe" -m pip show clip >nul 2>&1 || "%~dp0venv\Scripts\python.exe" -m pip install --quiet --no-build-isolation "https://github.com/openai/CLIP/archive/d50d76daa670286dd6cacf3bcd80b5e4823fc8e1.zip"
+    "%~dp0venv\Scripts\python.exe" -m pip install --quiet "numpy==1.26.4" --force-reinstall --no-deps >nul 2>&1
 )
 
 call webui.bat
