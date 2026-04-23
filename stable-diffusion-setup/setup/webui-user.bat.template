@@ -40,4 +40,14 @@ REM  UI 言語
 REM -----------------------------------------
 REM 日本語化は拡張機能 sd-webui-translations-ja から入れる (別途)
 
+REM -----------------------------------------
+REM  CLIP インストール問題の恒久対策
+REM  (setuptools 81+ で pkg_resources が消えた件、Forge の CLIP インストールが死ぬ)
+REM  venv ができてれば CLIP を先にインストール (既にあればスキップされる)
+REM -----------------------------------------
+if exist "%~dp0venv\Scripts\python.exe" (
+    "%~dp0venv\Scripts\python.exe" -m pip install --quiet "setuptools<81" wheel >nul 2>&1
+    "%~dp0venv\Scripts\python.exe" -m pip show clip >nul 2>&1 || "%~dp0venv\Scripts\python.exe" -m pip install --quiet --no-build-isolation "https://github.com/openai/CLIP/archive/d50d76daa670286dd6cacf3bcd80b5e4823fc8e1.zip"
+)
+
 call webui.bat
