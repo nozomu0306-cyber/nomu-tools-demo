@@ -112,11 +112,11 @@ $forge = "$env:USERPROFILE\AI\stable-diffusion-webui-forge\models"
 # FLUX.1-dev
 py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='city96/FLUX.1-dev-gguf', filename='flux1-dev-Q4_K_S.gguf', local_dir=r'$forge\Stable-diffusion')"
 
-# FLUX.1-Fill
-py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='city96/FLUX.1-Fill-dev-gguf', filename='flux1-fill-dev-Q4_K_S.gguf', local_dir=r'$forge\diffusion_models')"
+# FLUX.1-Fill (注: city96 には無いので YarvixPA)
+py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='YarvixPA/FLUX.1-Fill-dev-GGUF', filename='flux1-fill-dev-Q4_K_S.gguf', local_dir=r'$forge\diffusion_models')"
 
-# FLUX.1-Kontext
-py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='city96/FLUX.1-Kontext-dev-gguf', filename='flux1-kontext-dev-Q4_K_S.gguf', local_dir=r'$forge\diffusion_models')"
+# FLUX.1-Kontext (注: city96 には無いので QuantStack)
+py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='QuantStack/FLUX.1-Kontext-dev-GGUF', filename='flux1-kontext-dev-Q4_K_S.gguf', local_dir=r'$forge\diffusion_models')"
 
 # CLIP-L
 py -3.10 -c "from huggingface_hub import hf_hub_download; hf_hub_download(repo_id='comfyanonymous/flux_text_encoders', filename='clip_l.safetensors', local_dir=r'$forge\text_encoder')"
