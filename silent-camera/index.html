@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<title>Silent Camera — 無音カメラ</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app" class="app">
+
+  <!-- Live preview -->
+  <video id="preview" class="preview" autoplay playsinline muted webkit-playsinline></video>
+
+  <!-- Grid overlay -->
+  <div id="grid-overlay" class="grid-overlay" hidden>
+    <div class="grid-line grid-v1"></div>
+    <div class="grid-line grid-v2"></div>
+    <div class="grid-line grid-h1"></div>
+    <div class="grid-line grid-h2"></div>
+  </div>
+
+  <!-- Dim overlay (reduces screen brightness to avoid waking) -->
+  <div id="dim-overlay" class="dim-overlay"></div>
+
+  <!-- Night-mode red tint -->
+  <div id="night-overlay" class="night-overlay" hidden></div>
+
+  <!-- REC indicator -->
+  <div id="rec-indicator" class="rec-indicator" hidden>
+    <span class="rec-dot"></span>
+    <span id="rec-time" class="rec-time">00:00</span>
+  </div>
+
+  <!-- Flash hint on capture -->
+  <div id="flash-hint" class="flash-hint"></div>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <button id="btn-close" class="top-btn" aria-label="閉じる">×</button>
+    <div class="top-status" id="status">起動中…</div>
+    <button id="btn-help" class="top-btn" aria-label="ヘルプ">?</button>
+  </div>
+
+  <!-- Side panel -->
+  <div class="side-panel">
+    <button id="btn-grid"  class="side-btn" aria-label="グリッド"><span>⊞</span><em>GRID</em></button>
+    <button id="btn-torch" class="side-btn" aria-label="ライト"><span>⚡</span><em>LIGHT</em></button>
+    <button id="btn-night" class="side-btn" aria-label="ナイトモード"><span>🌙</span><em>NIGHT</em></button>
+    <button id="btn-audio" class="side-btn" aria-label="録音"><span>🎙</span><em>MIC ON</em></button>
+    <label class="side-btn side-dim" aria-label="画面を暗く">
+      <span>☾</span>
+      <em>DIM</em>
+      <input id="dim-range" type="range" min="0" max="0.85" step="0.05" value="0">
+    </label>
+  </div>
+
+  <!-- Zoom slider -->
+  <div class="zoom-wrap" id="zoom-wrap" hidden>
+    <input id="zoom-range" type="range" min="1" max="5" step="0.1" value="1">
+    <div class="zoom-label" id="zoom-label">1.0x</div>
+  </div>
+
+  <!-- Bottom control bar -->
+  <div class="bottom-bar">
+    <div class="mode-switch">
+      <button class="mode-btn is-active" data-mode="photo">写真</button>
+      <button class="mode-btn" data-mode="video">ビデオ</button>
+    </div>
+
+    <div class="shutter-row">
+      <button id="btn-gallery" class="circle-btn gallery-btn" aria-label="直近のショット">
+        <img id="gallery-thumb" alt="">
+        <span id="gallery-placeholder" class="gallery-placeholder">▢</span>
+      </button>
+
+      <button id="btn-shutter" class="shutter" aria-label="撮影">
+        <span class="shutter-inner"></span>
+      </button>
+
+      <button id="btn-flip" class="circle-btn flip-btn" aria-label="カメラ切替">⟲</button>
+    </div>
+  </div>
+
+  <!-- Preview / Gallery modal -->
+  <div id="result-overlay" class="result-overlay" hidden>
+    <div class="result-inner">
+      <div class="result-top">
+        <button id="result-close" class="top-btn">×</button>
+        <span id="result-title">プレビュー</span>
+        <span class="spacer"></span>
+      </div>
+      <div class="result-media" id="result-media"></div>
+      <div class="result-actions">
+        <a id="result-save" class="result-btn primary" download>保存</a>
+        <button id="result-share" class="result-btn">共有</button>
+        <button id="result-delete" class="result-btn danger">削除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help overlay -->
+  <div id="help-overlay" class="help-overlay" hidden>
+    <div class="help-inner">
+      <button id="help-close" class="top-btn">×</button>
+      <h2>Silent Camera</h2>
+      <p>iPhone のシャッター音を鳴らさずに写真・ビデオを撮影するブラウザツールです。</p>
+      <ul>
+        <li><b>音が鳴らない理由</b>：Safari の <code>getUserMedia</code> はカメラアプリとは別経路のため、OS のシャッター音強制が適用されません。</li>
+        <li><b>DIM</b>：画面を暗くして、端末自体の光で子どもを起こさないようにします。</li>
+        <li><b>NIGHT</b>：赤みのフィルタで、暗闇で目を慣らしたまま撮影できます（目の刺激が少ない）。</li>
+        <li><b>MIC OFF</b>：ビデオ撮影時もマイクをオフにできます。</li>
+        <li><b>保存</b>：撮影後、ダウンロードまたは iOS の共有シート（「写真に追加」）から保存できます。</li>
+      </ul>
+      <p class="help-foot">※ HTTPS または localhost でのみ動作します。初回にカメラ・マイクの許可を求められます。</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

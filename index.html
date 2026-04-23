@@ -569,6 +569,17 @@ body {
       img: 'img/label.jpg',
       badge: 'NEW',
     },
+    {
+      id: 'silent',
+      icon: '📷',
+      name: 'Silent Camera',
+      nameJa: '無音カメラ',
+      desc: 'iPhone のシャッター音を鳴らさずに写真・ビデオを撮影。寝ている子どもやペットの撮影に。getUserMedia 経由で OS のシャッター音強制を回避。',
+      tags: ['無音撮影', 'PWA', 'Night モード', 'DIM', 'フラッシュ/ズーム対応'],
+      boothId: '',
+      img: 'img/silent-camera.jpg',
+      badge: 'NEW',
+    },
   ];
 
   // Render tool cards
@@ -614,6 +625,7 @@ body {
     soundboard: 'http://localhost:8081/index.html',
     alert: 'http://localhost:8086/settings.html',
     label: 'http://localhost:8087/settings.html',
+    silent: 'http://localhost:8088/index.html',
   } : {
     timer: 'stream-timer/settings.html',
     chat: 'chat-style-pro/settings.html',
@@ -622,6 +634,7 @@ body {
     soundboard: 'stream-soundboard/index.html',
     alert: 'stream-alert-pro/settings.html',
     label: 'stream-label-pro/settings.html',
+    silent: 'silent-camera/index.html',
   };
 
   document.addEventListener('click', function(e) {
