@@ -165,7 +165,9 @@ $downloads = @(
     @{ repo="QuantStack/FLUX.1-Kontext-dev-GGUF";file="flux1-kontext-dev-Q4_K_S.gguf";  dest=$FluxDiffDir; label="FLUX.1-Kontext Q4 (約7GB)" },
     @{ repo="comfyanonymous/flux_text_encoders"; file="clip_l.safetensors";             dest=$TextEncDir; label="CLIP-L (約246MB)" },
     @{ repo="comfyanonymous/flux_text_encoders"; file="t5xxl_fp8_e4m3fn.safetensors";   dest=$TextEncDir; label="T5XXL fp8 (約4.9GB)" },
-    @{ repo="black-forest-labs/FLUX.1-dev";      file="ae.safetensors";                 dest=$VaeDir;      label="FLUX VAE (約335MB)" }
+    @{ repo="black-forest-labs/FLUX.1-dev";      file="ae.safetensors";                 dest=$VaeDir;     label="FLUX VAE (約335MB)" }
+    # SDXL Turbo は手動 DL: Civitai 215317 は 404、HF stabilityai/sdxl-turbo から手動で取得して
+    # models/Stable-diffusion/sdxlTurbo.safetensors にリネーム配置
 )
 
 $failed = @()

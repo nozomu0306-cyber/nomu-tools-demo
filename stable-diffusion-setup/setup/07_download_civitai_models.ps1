@@ -79,8 +79,10 @@ $models = @(
     @{ id = 133005; rename = "juggernautXL_v11.safetensors";  versionMatch = "v11"; nsfw = $false; label = "Juggernaut XL v11" },
     @{ id = 139562; rename = "realvisxlV5.safetensors";       versionMatch = "V5";  nsfw = $false; label = "RealVisXL V5.0" },
     @{ id = 257749; rename = "ponyDiffusionV6XL.safetensors"; versionMatch = "V6";  nsfw = $true;  label = "Pony Diffusion V6 XL" },
-    @{ id = 958009; rename = "bigASPv2.safetensors";          versionMatch = "v2";  nsfw = $true;  label = "Big ASP v2" },
-    @{ id = 215317; rename = "sdxlTurbo.safetensors";         versionMatch = $null; nsfw = $false; label = "SDXL Turbo" }
+    @{ id = 958009; rename = "bigASPv2.safetensors";          versionMatch = "v2";  nsfw = $true;  label = "Big ASP v2" }
+    # SDXL Turbo (Civitai 215317) は 404 のためここでは扱わない。
+    # 公式 stabilityai/sdxl-turbo か別の Civitai モデルから手動 DL して
+    # models/Stable-diffusion/sdxlTurbo.safetensors として配置すること。
 )
 
 $failed = @()
