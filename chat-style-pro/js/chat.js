@@ -1,7 +1,8 @@
 /*  Chat Style Pro - Chat Display Engine
     OBSブラウザソースで表示するチャットオーバーレイ
-    YouTube Live / Twitch のチャットURLと連携、
-    またはデモモードでサンプル表示 */
+    デモモード / postMessage API で表示。
+    YouTube Live の実チャットは settings.html の「YouTube」タブで
+    生成するカスタムCSS（js/youtube.js）で同じテーマを適用する */
 
 (function () {
   'use strict';
@@ -22,15 +23,15 @@
     showAvatar:  params.get('avatar')     !== 'false',
     showName:    params.get('name')       !== 'false',
     // カスタムカラー
-    nameColor:   params.get('nameColor')  || '',
-    textColor:   params.get('textColor')  || '',
-    bgColor:     params.get('bgColor')    || '',
+    nameColor:   safeColor(params.get('nameColor')),
+    textColor:   safeColor(params.get('textColor')),
+    bgColor:     /^#[0-9a-f]{6}$/i.test(params.get('bgColor') || '') ? params.get('bgColor') : '',
     bgOpacity:   parseFloat(params.get('bgOpacity') || '1'),
     // 角丸
     borderRadius: parseInt(params.get('radius') || '8', 10),
     // メッセージ間隔
     gap:         parseInt(params.get('gap') || '6', 10),
-    // チャットソース (demo / yt:<videoId> / twitch:<channel>)
+    // チャットソース (demo / none)
     source:      params.get('source')     || 'demo',
     // デモ速度（ミリ秒）
     demoSpeed:   parseInt(params.get('demoSpeed') || '3000', 10),
@@ -69,7 +70,7 @@
 
     // アバター
     if (cfg.showAvatar) {
-      const avatarColor = color || stringToColor(name);
+      const avatarColor = safeColor(color) || stringToColor(name);
       const initial = name.charAt(0).toUpperCase();
       html += `<div class="chat-avatar" style="background:${avatarColor}">${initial}</div>`;
     }
@@ -161,11 +162,10 @@
     return `hsl(${h}, 65%, 55%)`;
   }
 
-  // ── YouTube Live チャット連携 ──
-  // 注: YouTube Live チャットはiframeのCORS制限があるため、
-  // 実際の連携にはサーバーサイドか拡張機能が必要。
-  // ここではChat v2.0 Style Generator互換のURLパラメータ形式をサポート。
-  // 実用的にはYouTube Live Chat CSS等と組み合わせて使用。
+  // style属性に埋め込む色は #hex / rgb() / hsl() / 色名だけ許可
+  function safeColor(c) {
+    return /^(#[0-9a-f]{3,8}|(rgb|hsl)a?\([\d.,%\s]+\)|[a-z]+)$/i.test(c || '') ? c : '';
+  }
 
   // ── 外部メッセージ受信（postMessage API） ──
   window.addEventListener('message', (e) => {
@@ -173,8 +173,8 @@
       const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
       if (data.type === 'chat-message') {
         addMessage(
-          data.name || 'Anonymous',
-          data.text || '',
+          String(data.name || 'Anonymous'),
+          String(data.text || ''),
           data.color || null,
           data.highlighted || false
         );
