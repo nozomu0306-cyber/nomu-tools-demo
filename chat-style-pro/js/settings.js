@@ -14,6 +14,8 @@
       nameColorOn: false, nameColor: '#00ccff',
       textColorOn: false, textColor: '#ffffff',
       bgColorOn: false, bgColor: '#1a1a2e', bgOpacity: 0.85,
+      ytInput: '', ytSuperchat: true, ytMembership: true, ytRoleColors: true,
+      ytHideTimestamp: true, ytHideBadges: false, ytTicker: false,
     };
   }
 
@@ -56,7 +58,12 @@
     $('opt-nameColor').value = state.nameColor;
     $('opt-textColor').value = state.textColor;
     $('opt-bgColor').value = state.bgColor;
+    // YouTube
+    $('opt-ytInput').value = state.ytInput;
+    YT_FLAGS.forEach(k => { $('opt-' + k).checked = state[k]; });
   }
+
+  const YT_FLAGS = ['ytSuperchat', 'ytMembership', 'ytRoleColors', 'ytHideTimestamp', 'ytHideBadges', 'ytTicker'];
 
   function setRange(id, val, valId, unit) {
     $(id).value = val;
@@ -83,6 +90,8 @@
     state.bgColorOn = $('opt-bgColorOn').checked;
     state.bgColor = $('opt-bgColor').value;
     state.bgOpacity = parseFloat($('opt-bgOpacity').value);
+    state.ytInput = $('opt-ytInput').value;
+    YT_FLAGS.forEach(k => { state[k] = $('opt-' + k).checked; });
   }
 
   function buildURL() {
@@ -117,7 +126,33 @@
       const url = buildURL();
       $('obs-url').value = url.replace('&source=demo&demoSpeed=' + state.demoSpeed, '');
       $('preview-frame').src = url;
+      updateYouTube();
     }, 300);
+  }
+
+  // ── YouTube Live チャット用 URL / カスタムCSS ──
+  function updateYouTube() {
+    const YT = window.ChatStyleYouTube;
+    const id = YT.parseVideoId(state.ytInput);
+    const $status = $('yt-status');
+    if (id) {
+      $('yt-chat-url').value = YT.buildChatURL(id);
+      $status.textContent = '動画ID: ' + id;
+      $status.className = 'help-text ok';
+    } else {
+      $('yt-chat-url').value = '';
+      $status.textContent = state.ytInput.trim() ? '動画IDを読み取れませんでした（watch?v= / live/ / youtu.be の URL に対応）' : '';
+      $status.className = 'help-text err';
+    }
+    $('yt-css').value = YT.buildCSS(state);
+  }
+
+  function copyText(text, msgId, msg) {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      $(msgId).textContent = msg;
+      setTimeout(() => { $(msgId).textContent = ''; }, 3000);
+    });
   }
 
   function onChange() {
@@ -156,11 +191,13 @@
 
     // URLコピー
     $('btn-copy-url').addEventListener('click', () => {
-      const url = $('obs-url').value;
-      navigator.clipboard.writeText(url).then(() => {
-        $('copy-msg').textContent = 'URLをコピーしました！';
-        setTimeout(() => { $('copy-msg').textContent = ''; }, 3000);
-      });
+      copyText($('obs-url').value, 'copy-msg', 'URLをコピーしました！');
+    });
+    $('btn-copy-yt-url').addEventListener('click', () => {
+      copyText($('yt-chat-url').value, 'yt-copy-msg', 'チャットURLをコピーしました！');
+    });
+    $('btn-copy-yt-css').addEventListener('click', () => {
+      copyText($('yt-css').value, 'yt-copy-msg', 'カスタムCSSをコピーしました！');
     });
 
     // プリセット

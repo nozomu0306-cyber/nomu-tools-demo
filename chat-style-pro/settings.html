@@ -32,6 +32,7 @@
         <button class="tab" data-tab="text">テキスト</button>
         <button class="tab" data-tab="display">表示</button>
         <button class="tab" data-tab="color">カラー</button>
+        <button class="tab" data-tab="youtube">YouTube</button>
         <button class="tab" data-tab="save">保存</button>
       </div>
 
@@ -180,6 +181,56 @@
         </div>
       </div>
 
+      <!-- YouTubeタブ -->
+      <div class="tab-content" id="tab-youtube">
+        <p class="help-text">YouTube Liveの実際のチャットを、このツールのテーマで表示します。OBSにYouTubeのチャット画面を読み込み、下のCSSで見た目を差し替える方式です（テーマ・テキスト・表示・カラーの設定が反映されます）。</p>
+        <div class="field">
+          <label>配信の動画ID または URL</label>
+          <input type="text" id="opt-ytInput" class="input" placeholder="https://www.youtube.com/live/xxxxxxxxxxx">
+          <p id="yt-status" class="help-text"></p>
+        </div>
+        <div class="field">
+          <label>OBS ブラウザソースの URL</label>
+          <div class="url-row">
+            <input type="text" id="yt-chat-url" class="url-input" readonly placeholder="動画IDを入力すると表示されます">
+            <button id="btn-copy-yt-url" class="btn btn-primary btn-sm">コピー</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>OBS ブラウザソースの「カスタムCSS」</label>
+          <textarea id="yt-css" class="input code-area" readonly rows="8"></textarea>
+          <button id="btn-copy-yt-css" class="btn btn-primary btn-sm" style="margin-top:6px;">CSSをコピー</button>
+          <p id="yt-copy-msg" class="copy-msg"></p>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytSuperchat" checked> スーパーチャット / ステッカーを表示</label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytMembership" checked> メンバーシップ加入・ギフトを表示</label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytRoleColors" checked> 配信者・モデレーター・メンバーの名前を色分け</label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytHideTimestamp" checked> タイムスタンプを隠す</label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytHideBadges"> バッジ（メンバー・モデレーター）を隠す</label>
+        </div>
+        <div class="field">
+          <label class="checkbox-label"><input type="checkbox" id="opt-ytTicker"> 上部のスパチャ ティッカーを表示</label>
+        </div>
+        <hr class="divider">
+        <h3 class="section-title">OBSへの設定手順</h3>
+        <ol class="steps">
+          <li>OBSの「ソース」→「＋」→「ブラウザ」を追加</li>
+          <li>「URL」に上のURLを貼り付け（幅400〜500 / 高さ600〜800 推奨）</li>
+          <li>「カスタムCSS」の中身を消して、上のCSSを貼り付け</li>
+          <li>配信ごとに動画IDが変わるので、URLだけ差し替え（CSSはそのまま使えます）</li>
+        </ol>
+        <p class="help-text">※ 配信開始前（待機所）でもチャットが有効なら表示されます。限定公開・メンバー限定チャットは、OBSの「ドックをインタラクト」でログインが必要な場合があります。</p>
+      </div>
+
       <!-- 保存タブ -->
       <div class="tab-content" id="tab-save">
         <h3 class="section-title">プリセット</h3>
@@ -218,6 +269,7 @@
   </div>
 </div>
 
+<script src="js/youtube.js"></script>
 <script src="js/settings.js"></script>
 </body>
 </html>
